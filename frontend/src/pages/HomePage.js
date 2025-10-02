@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Table from "../components/Table.js";
 
 function App() {
   const [genre, setGenre] = useState("");
@@ -24,6 +25,8 @@ function App() {
         </label>
         <button type="submit">Submit</button>
       </form>
+      <br></br>
+      <Table />
     </div>
   );
 }
