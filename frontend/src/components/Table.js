@@ -4,7 +4,7 @@ function Table() {
     const [data, setData] = useState([]);
 
     useEffect(() => {
-        fetch("data/")
+        fetch("http://localhost:5000/data")
         .then(response => response.json())
         .then(json => setData(json))
         .catch(error => console.error("Something went wrong! \n Error: ", error));
