@@ -21,9 +21,11 @@ def get_data():
       # Open CSV file and parse it
       with open("tmdb_5000_movies.csv") as file:
          reader = csv.DictReader(file)
+
+         # Add each row to list
          for row in reader:
-            # Add to list
             data.append(row)
+
    except Exception as e:
       print(f"Something went wrong! \n Error: {str(e)}")
 
