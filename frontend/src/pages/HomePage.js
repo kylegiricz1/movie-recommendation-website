@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Table from "../components/Table.js";
 
-function App() {
+function HomePage() {
   const [genre, setGenre] = useState("");
 
   const handleSubmit = (e) => {
@@ -31,4 +31,4 @@ function App() {
   );
 }
 
-export default App;
+export default HomePage;
