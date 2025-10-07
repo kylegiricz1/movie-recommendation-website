@@ -4,7 +4,7 @@ function Table() {
     const [data, setData] = useState([]);
 
     // Get back-end URL
-    const URL = window.location.href.replace("3000", "5000") + "/data";
+    const URL = window.location.href.replace("3000", "5200") + "/data";
 
     // Fetch the data from the back-end
     useEffect(() => {
