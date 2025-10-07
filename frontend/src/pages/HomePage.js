@@ -25,6 +25,7 @@ function HomePage() {
             onChange={(e) => setGenre(e.target.value)}
           />
         </label>
+        <button type="submit">Submit</button>
         <label style={{ marginLeft: '12px' }}>
           Release Year:
           <input
