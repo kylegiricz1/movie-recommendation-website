@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Table from "../components/Table.js";
+import Navbar from '../components/Navbar.js';
 
 function HomePage() {
   const [genre, setGenre] = useState("");
@@ -14,7 +15,7 @@ function HomePage() {
 
   return (
     <div>
-      <h1>Movie Recommender</h1>
+      <Navbar/>
       <form onSubmit={handleSubmit}>
         <label>
           Genre:
