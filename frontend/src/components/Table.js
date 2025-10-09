@@ -11,12 +11,14 @@ function Table() {
         fetch(URL)
         .then(response => response.json())
         .then(json => setData(json))
-        .catch(error => console.error("Something went wrong! \n Error: ", error));
+        .catch(error => {
+            console.error("Something went wrong! \n Error: ", error);
+        });
     }, []);
 
     // Show loading text in meantime
     if (data.length === 0) {
-        return <p>Loading...</p>;
+        return <p style={{ textAlign: "center"}}><b>Loading movies...</b></p>;
     }
 
     return (
@@ -24,12 +26,13 @@ function Table() {
             <thead>
                 <tr style={{ backgroundColor: "#f2f2f2"}}>
                     <th>Name</th>
-                    <th>Year</th>
+                    <th>Date Released</th>
                     <th>Genres</th>
                     <th>Popularity</th>
                     <th>Vote Average</th>
                     <th>Vote Count</th>
                     <th>Budget</th>
+                    <th>Overview</th>
                 </tr>
             </thead>
             <tbody>
@@ -37,13 +40,14 @@ function Table() {
                     // The different columns of the table
                     data.map((row, position) => (
                         <tr key={position}>
-                            <td key={position}>{row.title}</td>
+                            <td key={position}><b>{row.title}</b></td>
                             <td key={position}>{row.release_date}</td>
                             <td key={position}>{JSON.parse(row.genres).map(item => item.name).join(", ")}</td>
                             <td key={position}>{row.popularity}</td>
                             <td key={position}>{row.vote_average}/10</td>
                             <td key={position}>{row.vote_count}</td>
                             <td key={position}>${row.budget}</td>
+                            <td key={position}><i>{row.overview}</i></td>
                         </tr>
                     ))
                 }

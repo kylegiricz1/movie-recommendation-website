@@ -28,6 +28,7 @@ def get_data():
 
    except Exception as e:
       print(f"Something went wrong! \n Error: {str(e)}")
+      return f"Something went wrong! \n Error: {str(e)}"
 
    # Return as JSON dictionary
    return jsonify(data)
