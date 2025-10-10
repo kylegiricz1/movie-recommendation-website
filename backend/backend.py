@@ -19,7 +19,7 @@ def get_data():
 
    try:
       # Open CSV file and parse it
-      with open("tmdb_5000_movies.csv") as file:
+      with open("atmdb_5000_movies.csv") as file:
          reader = csv.DictReader(file)
 
          # Add each row to list
@@ -27,8 +27,9 @@ def get_data():
             data.append(row)
 
    except Exception as e:
+      # Send error message back to user
       print(f"Something went wrong! \n Error: {str(e)}")
-      return f"Something went wrong! \n Error: {str(e)}"
+      return {"error": str(e)}
 
    # Return as JSON dictionary
    return jsonify(data)

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 function Table() {
     const [data, setData] = useState([]);
+    const [errorMessage, setErrorMessage] = useState("");
 
     // Get back-end URL
     const URL = window.location.href.replace("3000", "5200") + "/data";
@@ -9,16 +10,44 @@ function Table() {
     // Fetch the data from the back-end
     useEffect(() => {
         fetch(URL)
-        .then(response => response.json())
+        .then(response => {
+            // HTTP errors
+            if (!response.ok) {
+                console.error("Something went wrong! \n Error: ", response.status + "\n" + response.statusText);
+                setErrorMessage(response.status + "\n" + response.statusText);
+            } else {
+                return response.json()
+            }
+        })
         .then(json => setData(json))
         .catch(error => {
+            // Other errors
             console.error("Something went wrong! \n Error: ", error);
+            setErrorMessage(error.name + "\n" + error.message);
         });
     }, []);
 
-    // Show loading text in meantime
-    if (data.length === 0) {
+    if (errorMessage !== "") {
+        // Show error message
+        return (<div style={{ textAlign: "center"}}>
+                    <b>Something went wrong when retrieving the movies!</b>
+                    <br></br>
+                    Error:
+                    <br></br>
+                    {errorMessage}
+                </div>);
+    } else if (data.length === 0) {
+        // Show loading text in meantime
         return <p style={{ textAlign: "center"}}><b>Loading movies...</b></p>;
+    } else if (data.error) {
+        // Print error message from server
+                return (<div style={{ textAlign: "center"}}>
+                    <b>The server said something went wrong when retrieving the movies!</b>
+                    <br></br>
+                    Server-side error:
+                    <br></br>
+                    {data.error}
+                </div>);
     }
 
     return (
