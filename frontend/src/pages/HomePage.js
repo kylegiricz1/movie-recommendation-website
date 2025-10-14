@@ -30,7 +30,7 @@ function HomePage() {
         <label style={{ marginLeft: '12px' }}>
           Release Year:
           <input
-            type="number"
+            type="number"  
             name="year"
             value={year}
             onChange={(e) => setYear(e.target.value)}
