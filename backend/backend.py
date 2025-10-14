@@ -19,7 +19,7 @@ def get_data():
 
    try:
       # Open CSV file and parse it
-      with open("atmdb_5000_movies.csv") as file:
+      with open("tmdb_5000_movies.csv") as file:
          reader = csv.DictReader(file)
 
          # Add each row to list
