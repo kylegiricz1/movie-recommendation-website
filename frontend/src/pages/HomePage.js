@@ -8,8 +8,8 @@ function HomePage() {
 
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevent page reload
-  console.log("Selected Genre:", genre);
-  console.log("Selected year:", year);
+    console.log("Selected Genre:", genre);
+    console.log("Selected year:", year);
     // Call your API or filter movies here
   };
 
