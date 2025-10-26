@@ -51,7 +51,7 @@ function Table() {
     }
 
     return (
-        <table border="2px solid" cellPadding="5">
+        <table border="2px solid" cellPadding="5" id="movieTable">
             <thead>
                 <tr style={{ backgroundColor: "#f2f2f2"}}>
                     <th>Name</th>
