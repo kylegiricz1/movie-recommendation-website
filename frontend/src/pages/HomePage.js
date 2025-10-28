@@ -39,7 +39,7 @@ function HomePage() {
         <button type="submit">Submit</button>
       </form>
       <br></br>
-      <Table />
+      <Table/>
     </div>
   );
 }
