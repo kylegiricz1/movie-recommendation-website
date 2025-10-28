@@ -6,7 +6,8 @@ function About() {
     return (
         <div>
             <Navbar />
-            <main>
+
+            <main className="about-main">
                 <div className="about-section-container">
                 <section className="about-section">
                     <h1>About Movie Recommender</h1>
