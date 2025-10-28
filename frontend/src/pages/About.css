@@ -1,0 +1,13 @@
+.about-section {
+    max-width: 800px;
+    padding: 5px;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+}
+
+.about-section-container {
+    background-color: rgb(193, 189, 189);
+    border: 1px solid black;
+    border-radius: 8px;
+    margin-bottom: 5px;
+}
