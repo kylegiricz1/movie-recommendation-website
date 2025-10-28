@@ -28,10 +28,9 @@ def get_data():
 
    except Exception as e:
       print(f"Something went wrong! \n Error: {str(e)}")
-      return f"Something went wrong! \n Error: {str(e)}"
 
    # Return as JSON dictionary
    return jsonify(data)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5200)
+   app.run()
