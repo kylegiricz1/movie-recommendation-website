@@ -151,8 +151,7 @@ function HomePage() {
         <button type="submit">Search!</button>
       </form>
       <br></br>
-      <br></br>
-      <Table />
+      <Table/>
     </div>
   );
 }

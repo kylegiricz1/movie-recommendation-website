@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
+import "./Profile.css";
 
 function Profile() {
   const [user, setUser] = useState(null);
@@ -26,21 +27,22 @@ function Profile() {
 
   return (
     <div>
-      <Navbar />
+    <Navbar />
+    <div className="profile-container">
       <h2>User Profile</h2>
 
       {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
 
       {!loading && !error && user && (
-        <div>
+        <div >
           <p><strong>Name:</strong> {user.name}</p>
 
           <h3>Past Recommendations</h3>
           {user.pastRecommendations && user.pastRecommendations.length > 0 ? (
-            <ul>
+            <ul className="recomendation-list">
               {user.pastRecommendations.map((rec, index) => (
-                <li key={index}>{rec}</li>
+                <li className="reccomendation" key={index}>{rec}</li>
               ))}
             </ul>
           ) : (
@@ -48,6 +50,7 @@ function Profile() {
           )}
         </div>
       )}
+    </div>
     </div>
   );
 }
