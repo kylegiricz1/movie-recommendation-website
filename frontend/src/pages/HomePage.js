@@ -11,6 +11,7 @@ function HomePage() {
     e.preventDefault(); // Prevent page reload
 
     var genres = updateGenres();
+    var ratings = updateRatings();
     var year = document.getElementById("year").value;
 
     var table = document.getElementById("movieTable")
@@ -32,14 +33,26 @@ function HomePage() {
               table.rows[i].style.display="table-row";
             }
           }
+        }
 
-      }
+        // Similarly, I went through each selected rating and see if it was in the table cell text or not
+        if (ratings.length != 0) {
+            var movieRating = table.rows[i].cells[4].textContent.split("/")[0];
+            for (var j = 0; j < ratings.length; j++) {
+              if (movieRating.includes(ratings[j] + ".")) {
+                table.rows[i].style.display="table-row";
+                break;
+              } else {
+                table.rows[i].style.display="none";
+              }
+            }
+        }
 
-      // If the movie year doesn't match the selected year, hide the row
-      var movieYear = table.rows[i].cells[1].textContent;
-      if (year != "" && !movieYear.includes(year)) {
-          table.rows[i].style.display="none";
-      }
+        // If the movie year doesn't match the selected year, hide the row
+        var movieYear = table.rows[i].cells[1].textContent;
+        if (year != "" && !movieYear.includes(year)) {
+            table.rows[i].style.display="none";
+        }
       }
     }
   };
@@ -64,6 +77,28 @@ function HomePage() {
     document.getElementById("genre-button").innerHTML = buttonText.substring(0, buttonText.length - 2);
 
     return genres;
+  }
+
+  function updateRatings() {
+    var checkboxes = document.getElementsByClassName("rating-list");
+    var buttonText = "Selected Ratings: "
+    var ratings = []
+
+    // Get all selected rating checkboxes
+    for (let i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i].checked) {
+          ratings.push(checkboxes[i].value);
+          buttonText += checkboxes[i].value + ", "
+        }
+    }
+
+    // Update button text
+    if (ratings.length == 0) {
+      buttonText = "Selected Ratings: None  "
+    }
+    document.getElementById("rating-button").innerHTML = buttonText.substring(0, buttonText.length - 2);
+
+    return ratings;
   }
 
   return (
@@ -142,6 +177,53 @@ function HomePage() {
         </label>
         </div>
         </div>
+
+        <br></br>
+
+        <div class="rating-section">
+          <button id="rating-button">Selected Ratings: None</button>
+        <div class="rating-menu">
+        <label>
+          <input type="checkbox" class="rating-list" value="1" onChange={updateRatings}/>1/10
+        </label>
+        <br></br>
+               <label>
+          <input type="checkbox" class="rating-list" value="2" onChange={updateRatings}/>2/10
+        </label>
+        <br></br>
+               <label>
+          <input type="checkbox" class="rating-list" value="3" onChange={updateRatings}/>3/10
+        </label>
+        <br></br>
+               <label>
+          <input type="checkbox" class="rating-list" value="4" onChange={updateRatings}/>4/10
+        </label>
+        <br></br>
+               <label>
+          <input type="checkbox" class="rating-list" value="5" onChange={updateRatings}/>5/10
+        </label>
+        <br></br>
+               <label>
+          <input type="checkbox" class="rating-list" value="6" onChange={updateRatings}/>6/10
+        </label>
+        <br></br>
+               <label>
+          <input type="checkbox" class="rating-list" value="7" onChange={updateRatings}/>7/10
+        </label>
+        <br></br>
+               <label>
+          <input type="checkbox" class="rating-list" value="8" onChange={updateRatings}/>8/10
+        </label>
+        <br></br>
+               <label>
+          <input type="checkbox" class="rating-list" value="9" onChange={updateRatings}/>9/10
+        </label>
+        <br></br>
+        </div>
+        </div>
+
+        <br></br>
+
         <label style={{ marginLeft: '12px' }}>
           Release Year:
           &nbsp;
