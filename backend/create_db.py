@@ -1,0 +1,6 @@
+from db import engine, Base
+from models import Movies
+
+if __name__ == "__main__":
+    Base.metadata.create_all(bind=engine)
+    print("Table Created")
