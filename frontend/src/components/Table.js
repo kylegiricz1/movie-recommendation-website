@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react';
 
-function Table() {
+function Table({ data: externalData }) {
     const [data, setData] = useState([]);
     const [errorMessage, setErrorMessage] = useState("");
 
-    // Get back-end URL
+    // If externalData is provided by a parent (e.g., Wizard), use it; otherwise fetch from backend
     const URL = window.location.href.replace("3000", "5200") + "/data";
 
-    // Fetch the data from the back-end
     useEffect(() => {
+        if (externalData && Array.isArray(externalData)) {
+            setData(externalData);
+            return;
+        }
+
+        // Fetch the data from the back-end
         fetch(URL)
         .then(response => {
             // HTTP errors
@@ -25,7 +30,7 @@ function Table() {
             console.error("Something went wrong! \n Error: ", error);
             setErrorMessage(error.name + "\n" + error.message);
         });
-    }, []);
+    }, [externalData]);
 
     if (errorMessage !== "") {
         // Show error message
