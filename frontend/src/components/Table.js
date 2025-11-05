@@ -5,7 +5,7 @@ function Table({ data: externalData }) {
     const [errorMessage, setErrorMessage] = useState("");
 
     // If externalData is provided by a parent (e.g., Wizard), use it; otherwise fetch from backend
-    const URL = window.location.href.replace("3000", "5200") + "/data";
+    const URL = window.location.origin.replace("3000", "5200") + "/data";
 
     useEffect(() => {
         if (externalData && Array.isArray(externalData)) {
