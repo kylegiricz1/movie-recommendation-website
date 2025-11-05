@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-
+import "./Table.css";
 function Table({ data: externalData }) {
     const [data, setData] = useState([]);
     const [errorMessage, setErrorMessage] = useState("");
@@ -58,7 +58,7 @@ function Table({ data: externalData }) {
     return (
         <table border="2px solid" cellPadding="5" id="movieTable">
             <thead>
-                <tr style={{ backgroundColor: "#f2f2f2"}}>
+                <tr style={{ backgroundColor: "#f2f2f2", color: 'black'}}>
                     <th>Name</th>
                     <th>Date Released</th>
                     <th>Genres</th>
