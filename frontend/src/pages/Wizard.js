@@ -134,9 +134,9 @@ export default function Wizard() {
                                     {result.movie.overview && (
                                         <p className="movie-overview">{result.movie.overview}</p>
                                     )}
-                                    {result.movie.genres && (
-                                        <div className="movie-genres">
-                                            Genres: {result.movie.genres}
+                                    {result.summary && (
+                                        <div className="movie-summary">
+                                            Why you might like it: {result.summary}
                                         </div>
                                     )}
                                 </div>

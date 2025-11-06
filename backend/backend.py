@@ -3,6 +3,8 @@ from flask_cors import CORS
 import csv
 from flask import request
 import math
+import os
+from google import genai
 
 # Install Flask using pip install Flask (MAC "pip install Flask") 
 # # Run this file using python backend.py (MAC "python3 backend.py") 
@@ -12,6 +14,11 @@ CORS(app)
 
 # Cache for movie data
 MOVIE_CACHE = None
+
+# Gemini API Key
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+client = genai.Client(api_key=GOOGLE_API_KEY) if GOOGLE_API_KEY else None
+#client = genai.Client(api_key="YAIzaSyALQEfqLQ3bdKeRlSzBlDmmtZpJxCYKxME")
 
 def load_movie_data():
     global MOVIE_CACHE
@@ -217,15 +224,133 @@ def wizard():
     if best_match and '_score' in best_match:
         del best_match['_score']
             
+    #Gemini Addition
+    try:
+        # Fallback reason based on the answers provided
+        expl_parts = []
+        if isinstance(answers.get('genres'), list) and answers['genres']:
+            expl_parts.append(
+                "your interest in " + ", ".join(sorted(set(g.title() for g in answers['genres'])))
+            )
+        if isinstance(answers.get('decades'), list) and answers['decades']:
+            expl_parts.append("your preference for " + ", ".join(answers['decades']).upper())
+        if answers.get('runtime'):
+            expl_parts.append(f"chosen length: {answers['runtime']}")
+        if answers.get('rating'):
+            expl_parts.append(f"minimum rating ≥ {answers['rating']}")
+        if answers.get('primaryGenre'):
+            expl_parts.append(f"priority on {answers['primaryGenre']}")
+        if answers.get('recentness'):
+            expl_parts.append(f"{answers['recentness'].lower()} recentness")
+        if answers.get('popularity'):
+            expl_parts.append(f"leaning toward {answers['popularity'].lower()}")
+
+        fallback_summary = (
+            "Recommended because it aligns with " + ", ".join(expl_parts) + "."
+            if expl_parts else
+            "Recommended based on your answers."
+        )
+
+        # Build TMDB URL from CSV id (Kaggle tmdb_5000_movies.csv has 'id')
+        tmdb_id = ""
+        if best_match:
+            bm_id = best_match.get('id') or best_match.get('movie_id') or ""
+            tmdb_id = str(bm_id).strip()
+        tmdb_url = f"https://www.themoviedb.org/movie/{tmdb_id}" if tmdb_id else ""
+
+        # Compute a deterministic "match score" (1–10) based on how well it fits preferences
+        # This is NOT quality; it’s alignment with the provided answers.
+        def clamp(v, lo=1, hi=10):
+            return max(lo, min(hi, int(round(v))))
+
+        score = 5.0  # start neutral
+        try:
+            # Genre priority match
+            primary_genre = (answers.get('primaryGenre') or "").strip().lower()
+            if primary_genre and best_match and primary_genre in (best_match.get('genres') or "").lower():
+                score += 2.0
+
+            # Runtime match (string exact — we’re not changing your runtime logic)
+            if answers.get('runtime'):
+                score += 1.0  # user indicated a preference and we filtered already
+
+            # Decade preference present => small boost (we already filtered if set)
+            if isinstance(answers.get('decades'), list) and answers['decades']:
+                score += 0.5
+
+            # Recentness weighting
+            recentness = (answers.get('recentness') or "").strip()
+            if recentness == "Very Important":
+                score += 1.0
+            elif recentness == "Somewhat Important":
+                score += 0.5
+
+            # Popularity alignment (we already considered it in scoring; small bonus here)
+            pop_pref = (answers.get('popularity') or "").strip()
+            if pop_pref:
+                score += 0.5
+
+            # Rating threshold satisfied
+            if answers.get('rating'):
+                score += 0.5
+        except Exception:
+            pass
+
+        match_score = clamp(score, 1, 10)
+
+        # Ask Gemini ONLY for the 1–2 sentence explanation.
+        explanation = fallback_summary
+        if best_match and client:
+            prompt = (
+                "In 1–2 sentences, explain to a user why this movie fits their preferences. "
+                "Be specific but brief. Avoid raw IDs/JSON.\n\n"
+                f"User preference summary: {fallback_summary}\n\n"
+                "Movie metadata:\n"
+                f"Title: {best_match.get('title')}\n"
+                f"Year: {best_match.get('release_date','')[:4]}\n"
+                f"Genres: {best_match.get('genres')}\n"
+                f"Rating: {best_match.get('vote_average')}\n"
+                f"Runtime: {best_match.get('runtime')} minutes\n"
+                f"Overview: {best_match.get('overview')}\n"
+            )
+            try:
+                resp = client.models.generate_content(
+                    model="gemini-1.5-flash",
+                    contents=prompt
+                )
+                # Different SDKs expose text differently; try common attributes:
+                text = getattr(resp, "output_text", None) or getattr(resp, "text", None)
+                if not text and getattr(resp, "candidates", None):
+                    # very defensive parsing
+                    cand = resp.candidates[0]
+                    parts = getattr(getattr(cand, "content", None), "parts", None)
+                    if parts and len(parts) and hasattr(parts[0], "text"):
+                        text = parts[0].text
+                if text:
+                    explanation = text.strip()
+            except Exception:
+                pass
+
+        # FINAL summary = explanation + guaranteed score + guaranteed TMDB link
+        tail_bits = []
+        tail_bits.append(f"\nMatch Score: {match_score}/10\n")
+        if tmdb_url:
+            tail_bits.append(f"\nTMDB: {tmdb_url}")
+        tail_line = " • ".join(tail_bits)
+
+        summary = f"{explanation}\n{tail_line}"
+
+    except Exception:
+        summary = "Recommended based on your answers."
+
     return jsonify({
         "movie": best_match,
         "count": len(matches),
         "noMatches": False,
-        "message": f"Found {len(matches)} movies matching your criteria!"
+        "message": f"Found {len(matches)} movies matching your criteria!",
+        "summary": summary           
     })
-
 #END API ADDITION
-
 
 if __name__ == '__main__':
     app.run(debug=True, port=5200)
