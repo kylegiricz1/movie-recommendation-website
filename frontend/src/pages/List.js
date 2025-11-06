@@ -3,17 +3,7 @@ import Navbar from "../components/Navbar";
 import Table from "../components/Table.js";
 import "./List.css";
 
-function List() {
-
-  const handleSubmit = (e) => {
-    e.preventDefault(); // Prevent page reload
-
-    var genres = updateGenres();
-    var ratings = updateRatings();
-    var year = document.getElementById("year").value;
-
-    var table = document.getElementById("movieTable")
-
+export function filter(genres, ratings, year, table) {
     if (table != null) {
       // Go through each row
       for (var i = 1; i < table.rows.length; i++) {
@@ -53,6 +43,19 @@ function List() {
         }
       }
     }
+  };
+
+function List() {
+
+  const handleSubmit = (e) => {
+    e.preventDefault(); // Prevent page reload
+
+    var genres = updateGenres();
+    var ratings = updateRatings();
+    var table = document.getElementById("movieTable")
+    var year = document.getElementById("year").value;
+
+    filter(genres, ratings, year, table)
   };
 
   function updateGenres() {
