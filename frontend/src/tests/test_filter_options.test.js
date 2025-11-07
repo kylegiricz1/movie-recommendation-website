@@ -88,8 +88,9 @@ const htmlString = `<table id='movieTable'>
     </tbody>
 </table>`;
 
-  test('Filter by genre', () => {
+  test('Filter by genre - test single genre', () => {
     // Run the test (parse HTML string for table, then call filter function)
+    // Test single genre (drama)
     const genres = ["drama"];
     const html = new DOMParser().parseFromString(htmlString, "text/html");
     var table = html.getElementById("movieTable");
@@ -101,8 +102,37 @@ const htmlString = `<table id='movieTable'>
     expect(table.rows.item(3).style.display).toEqual("table-row"); // The Dark Knight Rises shows
   });
 
-  test('Filter by year', () => {
+  test('Filter by genre - test multiple genres', () => {
+    // Run the test (parse HTML string for table, then call filter function)
+    // Test multiple genres (action, adventure)
+    const genres = ["action", "adventure"];
+    const html = new DOMParser().parseFromString(htmlString, "text/html");
+    var table = html.getElementById("movieTable");
+    filter(genres, [], "", table);
+
+    // See if table shows rows correctly
+    expect(table.rows.item(1).style.display).toEqual("table-row"); // Avatar is shown
+    expect(table.rows.item(2).style.display).toEqual("table-row"); // Pirates of the Caribbean: At World's End is shown
+    expect(table.rows.item(3).style.display).toEqual("none"); // The Dark Knight Rises is hidden
+  });
+
+  test('Filter by genre - test that no genres match', () => {
+    // Run the test (parse HTML string for table, then call filter function)
+    // Test that no genres match
+    const genres = ["western"];
+    const html = new DOMParser().parseFromString(htmlString, "text/html");
+    var table = html.getElementById("movieTable");
+    filter(genres, [], "", table);
+
+    // See if table shows rows correctly
+    expect(table.rows.item(1).style.display).toEqual("none"); // Avatar is hidden
+    expect(table.rows.item(2).style.display).toEqual("none"); // Pirates of the Caribbean: At World's End is hidden
+    expect(table.rows.item(3).style.display).toEqual("none"); // The Dark Knight Rises is hidden
+  });
+
+  test('Filter by year - test a specific year', () => {
     // Run the test
+    // Match a specific year
     const year = "2007"
     const html = new DOMParser().parseFromString(htmlString, "text/html");
     var table = html.getElementById("movieTable");
@@ -114,8 +144,23 @@ const htmlString = `<table id='movieTable'>
     expect(table.rows.item(3).style.display).toEqual("none"); // The Dark Knight Rises is hidden
   });
 
-  test('Filter by year', () => {
+  test('Filter by year - test if no years match', () => {
+    // Run the test
+    // Test if no years match
+    const year = "2005"
+    const html = new DOMParser().parseFromString(htmlString, "text/html");
+    var table = html.getElementById("movieTable");
+    filter([], [], year, table);
+
+    // Match expected results?
+    expect(table.rows.item(1).style.display).toEqual("none"); // Avatar is hidden
+    expect(table.rows.item(2).style.display).toEqual("none"); // Pirates of the Caribbean: At World's End is hidden
+    expect(table.rows.item(3).style.display).toEqual("none"); // The Dark Knight Rises is hidden
+  });
+
+  test('Filter by rating - test single rating', () => {
     // Again run the test
+    // Test single rating
     const rating = ["7"];
     const html = new DOMParser().parseFromString(htmlString, "text/html");
     var table = html.getElementById("movieTable");
@@ -125,4 +170,32 @@ const htmlString = `<table id='movieTable'>
     expect(table.rows.item(1).style.display).toEqual("table-row"); // Avatar is shown
     expect(table.rows.item(2).style.display).toEqual("none"); // Pirates of the Caribbean: At World's End is hidden
     expect(table.rows.item(3).style.display).toEqual("table-row"); // The Dark Knight Rises is shown
+  });
+
+  test('Filter by rating - test multiple ratings', () => {
+    // Again run the test
+    // Test multiple ratings
+    const rating = ["6", "7"];
+    const html = new DOMParser().parseFromString(htmlString, "text/html");
+    var table = html.getElementById("movieTable");
+    filter([], rating, "", table);
+
+    // Match expected results?
+    expect(table.rows.item(1).style.display).toEqual("table-row"); // Avatar is shown
+    expect(table.rows.item(2).style.display).toEqual("table-row"); // Pirates of the Caribbean: At World's End is shown
+    expect(table.rows.item(3).style.display).toEqual("table-row"); // The Dark Knight Rises is shown
+  });
+
+  test('Filter by rating - test no ratings match', () => {
+    // Again run the test
+    // Test no ratings match
+    const rating = ["5"];
+    const html = new DOMParser().parseFromString(htmlString, "text/html");
+    var table = html.getElementById("movieTable");
+    filter([], rating, "", table);
+
+    // Match expected results?
+    expect(table.rows.item(1).style.display).toEqual("none"); // Avatar is hidden
+    expect(table.rows.item(2).style.display).toEqual("none"); // Pirates of the Caribbean: At World's End is hidden
+    expect(table.rows.item(3).style.display).toEqual("none"); // The Dark Knight Rises is hidden
   });
