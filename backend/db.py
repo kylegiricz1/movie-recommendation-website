@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 from contextlib import contextmanager
 
 params = config()
-engine = create_engine(f"postgresql://{params['user']}:{params['password']}@{params['host']}:{params['port']}/{params['database']}",
+engine = create_engine(f"postgresql://{params['user']}:{params['password']}@{params['host']}:{params['port']}/{params['database']}?client_encoding=utf8",
                        pool_size=5,
                        max_overflow=10,
                        pool_timeout=30,
