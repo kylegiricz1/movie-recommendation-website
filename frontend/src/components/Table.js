@@ -17,7 +17,7 @@ function Table({ data }) {
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="8">No movies match your results!</td>
+                        <td colspan="8" style={{ textAlign: "center", fontWeight: "bold"}}>No movies match your results!</td>
                     </tr>
                 </tbody>
             </table>

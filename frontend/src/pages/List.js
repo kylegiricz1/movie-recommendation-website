@@ -22,7 +22,7 @@ function List() {
               console.error("Something went wrong! \n Error: ", response.status + "\n" + response.statusText);
               setErrorMessage(response.status + "\n" + response.statusText);
           } else {
-              return response.json()
+              return response.json();
           }
       })
       .then(json => setData(json))
@@ -123,9 +123,9 @@ function List() {
     <div>
       <Navbar/>
       <h1>List of Movies</h1>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} style={{display: "flex"}}>
         <div class="genre-section">
-          <button id="genre-button">Selected Genres: None</button>
+          <button id="genre-button" style={{margin: "10px"}}>Selected Genres: None</button>
         <div class="genre-menu">
         <label>
           <input type="checkbox" class="genre-list" value="action" onChange={updateGenres}/>Action
@@ -180,7 +180,7 @@ function List() {
         </label>
         <br></br>
         <label>
-          <input type="checkbox" class="genre-list" value="science-fiction" onChange={updateGenres}/>Science Fiction
+          <input type="checkbox" class="genre-list" value="science fiction" onChange={updateGenres}/>Science Fiction
         </label>
         <br></br>
         <label>
@@ -197,10 +197,8 @@ function List() {
         </div>
         </div>
 
-        <br></br>
-
         <div class="rating-section">
-          <button id="rating-button">Selected Ratings: None</button>
+          <button id="rating-button" style={{margin: "10px"}}>Selected Ratings: None</button>
         <div class="rating-menu">
         <label>
           <input type="checkbox" class="rating-list" value="1" onChange={updateRatings}/>1/10
@@ -241,9 +239,9 @@ function List() {
         </div>
         </div>
 
-        <br></br>
 
-        <label style={{ marginLeft: '12px' }}>
+
+        <label style={{ margin: '10px'}}>
           Release Year:
           &nbsp;
           <input type="number" name="year" id="year"/>
@@ -282,7 +280,9 @@ function List() {
 
       { // Only show if there's data and no errors
         (data != null && errorMessage === "" && !data.error) ?
-        (<Table data={data} />) : ""
+        (<div><div style={{ textAlign: "center"}}>
+                    <b>{data.length} { (data.length == 1) ? "movie" : "movies" } found.</b>
+                </div><Table data={data} /></div>) : ""
       }
     </div>
   );
