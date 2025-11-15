@@ -12,7 +12,7 @@ For the front-end (React):
 For the back-end (Flask):
 - Open another terminal and go to the back-end folder.
 - Run `pip install flask`, `pip install flask_cors`, and `pip install -q -U google-genai` to install all required libraries.
-- Then run `python backend.py` to start the back-end.
+- Then run `python app.py` to start the back-end.
 
 Then go to `http://localhost:5000` to view the webpage.
 

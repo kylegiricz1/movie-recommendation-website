@@ -118,7 +118,6 @@ def get_data_filtered():
                 # If previous criteria is okay, check if year matched or not
                 if (met_criteria and movie_date != None):
                     # If the year does not match, then update met criteria boolean flag
-                    print(movie_date)
                     if (filtered_year not in movie_date):
                         met_criteria = False
 
