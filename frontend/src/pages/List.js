@@ -1,62 +1,79 @@
-import React from "react";
+import React, { useEffect, useState } from 'react';
 import Navbar from "../components/Navbar";
 import Table from "../components/Table.js";
 import "./List.css";
 
-export function filter(genres, ratings, year, table) {
-    if (table != null) {
-      // Go through each row
-      for (var i = 1; i < table.rows.length; i++) {
-        if (genres.length == 0) {
-          table.rows[i].style.display="table-row";
-        } else {
-          // If the movie genres does not include all of the selected genres, then hide the row
-          // I went through each selected genre and see if it was in the table cell text or not
-          var movieGenres = table.rows[i].cells[2].textContent.toLowerCase();
-          for (var j = 0; j < genres.length; j++) {
-            if (!movieGenres.includes(genres[j])) {
-              table.rows[i].style.display="none";
-              break;
-            } else {
-              table.rows[i].style.display="table-row";
-            }
-          }
-        }
-
-        // Similarly, I went through each selected rating and see if it was in the table cell text or not
-        if (ratings.length != 0) {
-            var movieRating = table.rows[i].cells[4].textContent.split("/")[0];
-            for (var j = 0; j < ratings.length; j++) {
-              if (movieRating.includes(ratings[j] + ".")) {
-                table.rows[i].style.display="table-row";
-                break;
-              } else {
-                table.rows[i].style.display="none";
-              }
-            }
-        }
-
-        // If the movie year doesn't match the selected year, hide the row
-        var movieYear = table.rows[i].cells[1].textContent;
-        if (year != "" && !movieYear.includes(year)) {
-            table.rows[i].style.display="none";
-        }
-      }
-    }
-  };
-
 function List() {
+  const [data, setData] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [initialLoaded, setIntitialLoaded] = useState(false);
 
-  const handleSubmit = (e) => {
+      // If externalData is provided by a parent (e.g., Wizard), use it; otherwise fetch from backend
+    const URL = window.location.origin.replace("5000", "5200") + "/data";
+    const URL_filtered = window.location.origin.replace("5000", "5200") + "/data_filtered";
+
+    // Ensure this code is only called once and not every render
+    if (!initialLoaded) {
+      // Fetch the data from the back-end
+      fetch(URL)
+      .then(response => {
+          // HTTP errors
+          if (!response.ok) {
+              console.error("Something went wrong! \n Error: ", response.status + "\n" + response.statusText);
+              setErrorMessage(response.status + "\n" + response.statusText);
+          } else {
+              return response.json()
+          }
+      })
+      .then(json => setData(json))
+      .catch(error => {
+          // Other errors
+          console.error("Something went wrong! \n Error: ", error);
+          setErrorMessage(error.name + "\n" + error.message);
+      });
+      setIntitialLoaded(true);
+  }
+
+  async function handleSubmit (e) {
     e.preventDefault(); // Prevent page reload
 
     var genres = updateGenres();
     var ratings = updateRatings();
-    var table = document.getElementById("movieTable")
     var year = document.getElementById("year").value;
 
-    filter(genres, ratings, year, table)
-  };
+    // Reset data
+    setErrorMessage("");
+    setData(null);
+
+    try {
+        // Send filters to back-end
+        const response = await fetch(URL_filtered, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ "genres": genres, "ratings": ratings, "year": year })
+        });
+
+        // Something went wrong!
+        if (!response.ok) {
+          setErrorMessage("Something went wrong when retrieveing the data! \n" + response.status + " " + response.statusText);
+          return
+        }
+
+        const responseData = await response.json();
+
+        // Response was empty
+        if (!responseData) {
+          setErrorMessage("No data was returned!");
+        }
+        
+        // Update with new data
+        setData(responseData)
+    } catch (error) {
+        // Something else went wrong
+        setErrorMessage("Something went wrong when retrieveing the data! \n" + error.message);
+        setData(null);
+    }
+  }
 
   function updateGenres() {
     var checkboxes = document.getElementsByClassName("genre-list");
@@ -236,7 +253,37 @@ function List() {
       </form>
       <br></br>
       <br></br>
-      <Table/>
+      { // Show error message
+        (errorMessage !== "") ?
+        (<div style={{ textAlign: "center"}}>
+                    <b>Something went wrong when retrieving the movies!</b>
+                    <br></br>
+                    Error:
+                    <br></br>
+                    {errorMessage}
+                </div>) : ""
+      }
+
+      { // Show loading text in meantime
+        (errorMessage === "" && data === null) ?
+        (<p style={{ textAlign: "center"}}><b>Loading movies...</b></p>): ""
+      }
+
+      { // Print error message from server if any
+        (data != null && data.error) ?
+                (<div style={{ textAlign: "center"}}>
+                    <b>The server said something went wrong when retrieving the movies!</b>
+                    <br></br>
+                    Server-side error:
+                    <br></br>
+                    {data.error}
+                </div>) : ""
+      }
+
+      { // Only show if there's data and no errors
+        (data != null && errorMessage === "" && !data.error) ?
+        (<Table data={data} />) : ""
+      }
     </div>
   );
 }

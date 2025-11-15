@@ -5,6 +5,7 @@ from flask import request
 import math
 import os
 from google import genai
+import json
 
 # Install Flask using pip install Flask (MAC "pip install Flask") 
 # # Run this file using python backend.py (MAC "python3 backend.py") 
@@ -63,6 +64,75 @@ def get_data():
    # Return as JSON dictionary
     return jsonify(data)
 
+@app.route('/data_filtered', methods=['POST'])
+def get_data_filtered():
+    data = []
+
+    # Get the filters
+    filters = request.get_json()
+    print("Received filters: " + str(filters))
+
+    filtered_genres = filters["genres"]
+    filtered_ratings = filters["ratings"]
+    filtered_year = filters["year"]
+
+    try:
+        #Read CSV using UTF-8 so Windows doesn't break
+        with open("tmdb_5000_movies.csv", encoding="utf-8") as file:
+            reader = csv.DictReader(file)
+
+            # Go through each row
+            for row in reader:
+                # Parse CSV data
+                movie_genres = row.get("genres")
+                movie_date = row.get("release_date")
+                movie_rating = row.get("vote_average")
+
+                movie_genres_parsed = []
+                met_criteria = True
+
+                # Parse and go through each of the movie's genres
+                if (movie_genres != None):
+                    movie_genres_parsed_json = json.loads(movie_genres)
+
+                    for entity in movie_genres_parsed_json:
+                        movie_genres_parsed.append(entity.get("name").lower())
+
+                    # If any filtered genre is missing, go to the next iteration
+                    for filtered_genre in filtered_genres:
+                        if (filtered_genre not in movie_genres_parsed):
+                            met_criteria = False
+                            break
+
+                # If previous criteria is okay, parse and go through each of the movie's ratings
+                if (met_criteria and movie_rating != None):
+
+                    # If all of the filtered ratings are missing, go to the next iteration
+                    for filtered_rating in filtered_ratings:
+                        if (movie_rating.startswith(filtered_rating + ".")):
+                            met_criteria = True
+                            break
+                        elif (not movie_rating.startswith(filtered_rating + ".")):
+                            met_criteria = False
+
+                # If previous criteria is okay, check if year matched or not
+                if (met_criteria and movie_date != None):
+                    # If the year does not match, then update met criteria boolean flag
+                    print(movie_date)
+                    if (filtered_year not in movie_date):
+                        met_criteria = False
+
+                # This will only be called if all of the previous requirements have been met
+                if (met_criteria):
+                    data.append(row)
+
+    except Exception as e:
+        # Send error message back to user
+        print(f"Something went wrong! \nError: {str(e)}")
+        return {"error": str(e)}
+
+   # Return as JSON dictionary
+    return jsonify(data)
 
 #API ADDITION: Wizard endpoint
 @app.route('/api/wizard', methods=['POST'])
