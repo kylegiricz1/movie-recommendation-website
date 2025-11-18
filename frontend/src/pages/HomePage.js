@@ -24,7 +24,7 @@ function HomePage() {
             <Link to="/wizard" className='movie-link'> <b>Wizard</b> </Link> 
             to get a single personalized pick!
           </p>
-      </section>
+      </section> 
       </div>
     </div>
   );
