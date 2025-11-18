@@ -17,3 +17,12 @@
     background-color: #f4f6f8;
     min-height: 100vh;
 }
+
+.movie-link {
+  text-decoration: none;
+  color: blue;
+}
+
+.movie-link:hover {
+  color: darkblue; /* change this to any color */
+}

@@ -1,5 +1,7 @@
 import { useState } from 'react';
+import { Link } from "react-router-dom";
 import Navbar from '../components/Navbar.js';
+
 import "./HomePage.css";
 
 function HomePage() {
@@ -17,7 +19,10 @@ function HomePage() {
               our system suggests movies based on your viewing history and preferences.
           </p>
           <p>
-            Click on the <b>List of Movies</b> to get multiple reccomendations or the <b>Wizard</b> to get a single personalized pick!
+            Click on the <Link to="/list" className='movie-link'> <b>List of Movies</b> </Link> 
+            to get multiple recommendations or the 
+            <Link to="/wizard" className='movie-link'> <b>Wizard</b> </Link> 
+            to get a single personalized pick!
           </p>
       </section>
       </div>
