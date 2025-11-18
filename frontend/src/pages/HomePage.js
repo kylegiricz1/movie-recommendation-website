@@ -17,7 +17,7 @@ function HomePage() {
               our system suggests movies based on your viewing history and preferences.
           </p>
           <p>
-            Click on the <b>List of Movies</b> or <b>Wizard</b> tabs to get started!
+            Click on the <b>List of Movies</b> to get multiple reccomendations or the <b>Wizard</b> to get a single personalized pick!
           </p>
       </section>
       </div>
