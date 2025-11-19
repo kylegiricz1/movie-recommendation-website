@@ -25,4 +25,5 @@ jobs:
 
       - name: Run Wizard API Tests
         run: |
-          pytest -q test_wizard.py
+          pytest backend/tests/test_wizard.py
+
