@@ -1,0 +1,81 @@
+.recommendations-section {
+    max-width: 800px;
+    padding: 5px;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+}
+
+.recommendations-section-container {
+    background-color: rgba(193, 189, 189, 0.336);
+    border-radius: 8px;
+    margin-bottom: 5px;
+    padding: 20px;
+}
+
+.recommendations-main {
+    padding: 40px;
+    background-color: #f4f6f8;
+    min-height: 100vh;
+}
+
+/* General layout */
+#movieTable {
+    width: 95%;
+    margin: 40px auto;
+    border-collapse: collapse;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 0.95rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #ffffff;
+}
+
+/* Header row */
+#movieTable thead {
+    background-color: #2c3e50;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+#movieTable th {
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid #ddd;
+}
+
+/* Table body */
+#movieTable td {
+    padding: 10px 16px;
+    border-bottom: 1px solid #e6e6e6;
+    vertical-align: top;
+}
+
+/* Zebra striping for better readability */
+#movieTable tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Hover effect */
+#movieTable tbody tr:hover {
+    background-color: #f1f7ff;
+    transition: background-color 0.2s ease-in-out;
+}
+
+/* Emphasized text inside cells */
+#movieTable td b {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+#movieTable td i {
+    color: #555;
+}
+
+/* Budget column formatting */
+#movieTable td:nth-child(7) {
+    color: #27ae60;
+    font-weight: 500;
+}
