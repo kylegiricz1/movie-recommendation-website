@@ -1,4 +1,4 @@
-name: Python Filter Test
+name: Python Movie Filter Test
 on:
   push:
     branches: [ main ]
