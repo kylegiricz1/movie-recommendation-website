@@ -19,11 +19,11 @@ jobs:
           node-version: '18'
       
       - name: Install dependencies
-        working-directory: Frontend
+        working-directory: frontend
         run: |
             npm install
             npm install cross-env
       
       - name: Run tests
-        working-directory: Frontend
+        working-directory: frontend
         run: npm test
