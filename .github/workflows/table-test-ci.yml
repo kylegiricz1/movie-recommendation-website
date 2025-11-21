@@ -1,4 +1,4 @@
-name: React Filtering Movie Table Test
+name: React Movie Table Display Test
 on:
   push:
     branches: [ main ]
@@ -19,10 +19,11 @@ jobs:
           node-version: '18'
       
       - name: Install dependencies
-        working-directory: frontend
+        working-directory: Frontend
         run: |
             npm install
             npm install cross-env
       
       - name: Run tests
+        working-directory: Frontend
         run: npm test
