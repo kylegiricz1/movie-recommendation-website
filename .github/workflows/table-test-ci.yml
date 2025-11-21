@@ -1,4 +1,4 @@
-name: React Movie Table Test
+name: React Filtering Movie Table Test
 on:
   push:
     branches: [ main ]
