@@ -10,6 +10,9 @@ import json
 # Install Flask using pip install Flask (MAC "pip install Flask") 
 # # Run this file using python backend.py (MAC "python3 backend.py") 
 # # Access the server at http://localhost:5000/ <-example
+# Fix path for CSV in both pytest and production
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CSV_PATH = os.path.join(BASE_DIR, "tmdb_5000_movies.csv")
 app = Flask(__name__)
 CORS(app)
 
@@ -26,7 +29,7 @@ def load_movie_data():
     if MOVIE_CACHE is None:
         try:
             data = []
-            with open("tmdb_5000_movies.csv", encoding="utf-8") as file:
+            with open(CSV_PATH, encoding="utf-8") as file:
                 reader = csv.DictReader(file)
                 for row in reader:
                     # Pre-process the data
@@ -49,7 +52,7 @@ def get_data():
 
     try:
         #Read CSV using UTF-8 so Windows doesn't break
-        with open("tmdb_5000_movies.csv", encoding="utf-8") as file:
+        with open(CSV_PATH, encoding="utf-8") as file:
             reader = csv.DictReader(file)
 
             # Add each row to list
@@ -78,7 +81,7 @@ def get_data_filtered():
 
     try:
         #Read CSV using UTF-8 so Windows doesn't break
-        with open("tmdb_5000_movies.csv", encoding="utf-8") as file:
+        with open(CSV_PATH, encoding="utf-8") as file:
             reader = csv.DictReader(file)
 
             # Go through each row
@@ -167,7 +170,7 @@ def wizard():
     matches = []
 
     try:
-        with open("tmdb_5000_movies.csv", encoding="utf-8") as file:
+        with open(CSV_PATH, encoding="utf-8") as file:
             reader = csv.DictReader(file)
             for row in reader:
                 #Basic filters: genres, decades, rating

@@ -1,0 +1,24 @@
+name: React Movie Table Display Test
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+    
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Install dependencies
+        working-directory: frontend
+        run: |
+            npm install
+            npm install cross-env
+      
+      - name: Run tests
+        working-directory: frontend
+        run: npm test test_table_display.test.js
