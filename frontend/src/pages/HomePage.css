@@ -1,8 +1,8 @@
-.home-section {
-    max-width: 800px;
-    padding: 5px;
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
+/* Parent section so the background can fill it */
+.hero {
+  position: relative;
+  min-height: 80vh;   /* or 100vh for full screen */
+  width: 100%;
 }
 
 .home-section-container {
