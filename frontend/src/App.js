@@ -1,16 +1,24 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
-import { Container } from "@mui/material";
+import About from "./pages/About";
+import List from "./pages/List";
+import Profile from "./pages/Profile";
+import Recommendations from "./pages/Recommendations";
+import Wizard from "./pages/Wizard";
+import { CssBaseline, Container } from "@mui/material";
 
 function App() {
   return (
     <Router>
-      <Container maxWidth="lg">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-        </Routes>
-      </Container>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/list" element={<List />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/recommendations" element={<Recommendations />} />
+        <Route path="/wizard" element={<Wizard />} />
+      </Routes>
     </Router>
   );
 }
