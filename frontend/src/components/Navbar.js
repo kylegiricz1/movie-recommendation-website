@@ -1,18 +1,25 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import "./Navbar.css";
+import { AppBar, Toolbar, Typography, Box } from "@mui/material";
 
 function Navbar() {
   return (
-    <nav className="navbar">
-      <h1 className="navbar-logo">Movie Recommender</h1>
-      <ul className="navbar-links">
-        <li><Link to="/">Home</Link></li>
-        <li><Link to="/recommendations">Recommendations</Link></li>
-        <li><Link to="/favorites">Favorites</Link></li>
-        <li><Link to="/about">About</Link></li>
-      </ul>
-    </nav>
+    <AppBar position="sticky" sx={{ backgroundColor: "#111", padding: ".25rem 1rem", mb: 3 }}>
+      <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+          Movie Recommender
+        </Typography>
+        <Box component="nav" sx={{ display: "flex", gap: 2 }}>
+          <Link to="/" style={{ color: "white", textDecoration: "none" }}>Home</Link>
+          <Link to="/list" style={{ color: "white", textDecoration: "none" }}>List</Link>
+          <Link to="/recommendations" style={{ color: "white", textDecoration: "none" }}>Recommendations</Link>
+          <Link to="/wizard" style={{ color: "white", textDecoration: "none" }}>Wizard</Link>
+          <Link to="/favorites" style={{ color: "white", textDecoration: "none" }}>Favorites</Link>
+          <Link to="/about" style={{ color: "white", textDecoration: "none" }}>About</Link>
+          <Link to="/profile" style={{ color: "white", textDecoration: "none" }}>Profile</Link>
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 }
 

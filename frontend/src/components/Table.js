@@ -1,59 +1,76 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material';
 
-function Table() {
-    const [data, setData] = useState([]);
+function MovieTable({ data }) {
+    const headers = ["Name", "Data Realeasd", "Genres", "Popularity", "Vote Average", "Vote Count", "Budget", "Overview"];
+    const bodyCellSx = { padding: "10px 16px", verticalAlign: "top", borderBottom: "1px solid #e6e6e6" };
+    const budgetCellSx = { color: "#27ae60", fontWeight: 500 };
+    const boldTextSx = { fontWeight: 600, color: "#2c3e50" };
+    const italicTextSx = { color: "#555", fontStyle: "italic" };
+    const rowSx = (index) => ({ backgroundColor: index % 2 === 0 ? "#f9f9f9" : "#ffffff", 
+        "&:hover": { 
+            backgroundColor: "#f1f7ff",
+            transition: "background-color 0.2s ease-in-out",
+        }
+    });
 
-    // Get back-end URL
-    const URL = window.location.href.replace("3000", "5200") + "/data";
-
-    // Fetch the data from the back-end
-    useEffect(() => {
-        fetch(URL)
-        .then(response => response.json())
-        .then(json => setData(json))
-        .catch(error => {
-            console.error("Something went wrong! \n Error: ", error);
-        });
-    }, []);
-
-    // Show loading text in meantime
-    if (data.length === 0) {
-        return <p style={{ textAlign: "center"}}><b>Loading movies...</b></p>;
+    if (!data || data.length === 0) {
+        return (
+            <TableContainer component={Paper} sx={{ width: "95%", margin: "40px auto", borderRadius: "8px", overflow: "hidden", boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)" }}>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            {headers.map((header) => (
+                                <TableCell key={header} sx={{ backgroundColor: "#2c3e50", color: "#ffffff", textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 600, padding: "12px 16px" }}>
+                                    {header}
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        <TableRow>
+                            <TableCell colSpan={8} sx={{ textAlign: "center", fontWeight: "bold" }}>
+                                No movies match your results!
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        )
     }
-
     return (
-        <table border="2px solid" cellPadding="5">
-            <thead>
-                <tr style={{ backgroundColor: "#f2f2f2"}}>
-                    <th>Name</th>
-                    <th>Date Released</th>
-                    <th>Genres</th>
-                    <th>Popularity</th>
-                    <th>Vote Average</th>
-                    <th>Vote Count</th>
-                    <th>Budget</th>
-                    <th>Overview</th>
-                </tr>
-            </thead>
-            <tbody>
-                {
-                    // The different columns of the table
-                    data.map((row, position) => (
-                        <tr key={position}>
-                            <td key={position}><b>{row.title}</b></td>
-                            <td key={position}>{row.release_date}</td>
-                            <td key={position}>{JSON.parse(row.genres).map(item => item.name).join(", ")}</td>
-                            <td key={position}>{row.popularity}</td>
-                            <td key={position}>{row.vote_average}/10</td>
-                            <td key={position}>{row.vote_count}</td>
-                            <td key={position}>${row.budget}</td>
-                            <td key={position}><i>{row.overview}</i></td>
-                        </tr>
-                    ))
-                }
-            </tbody>
-        </table>
+        <TableContainer component={Paper} sx={{ width: "95%", margin: "40px auto", borderRadius: "8px", overflow: "hidden", boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)" }}>
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        {headers.map((header) => (
+                            <TableCell key={header} sx={{ backgroundColor: "#2c3e50", color: "#ffffff", textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 600, padding: "12px 16px" }}>
+                                {header}
+                            </TableCell>
+                        ))}
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {data.map((row, index) => (
+                        <TableRow key={index} sx={rowSx(index)}>
+                            <TableCell sx={bodyCellSx}>
+                                <span style={boldTextSx}>{row.title}</span>
+                            </TableCell>
+                            <TableCell sx={bodyCellSx}>{row.release_date}</TableCell>
+                            <TableCell sx={bodyCellSx}>
+                                {JSON.parse(row.genres).map((g) => g.name).join(", ")}
+                            </TableCell>
+                            <TableCell sx={bodyCellSx}>{row.popularity}</TableCell>
+                            <TableCell sx={bodyCellSx}>{row.vote_average}/10</TableCell>
+                            <TableCell sx={bodyCellSx}>{row.vote_count}</TableCell>
+                            <TableCell sx={{ ...bodyCellSx, ...budgetCellSx }}>${row.budget}</TableCell>
+                            <TableCell sx={{ ...bodyCellSx, ...italicTextSx }}>{row.overview}</TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </TableContainer>
     )
 }
 
-export default Table;
+export default MovieTable;

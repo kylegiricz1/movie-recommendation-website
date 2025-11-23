@@ -9,6 +9,9 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        {/* Add other routes */}
+        {/* <Route path="/list" element={<ListPage />} /> */}
+        {/* <Route path="/recommendations" element={<RecommendationsPage />} /> */}
       </Routes>
     </Router>
   );
