@@ -1,18 +1,16 @@
-// src/App.js
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
-// Import other pages/components as needed
+import { Container } from "@mui/material";
 
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        {/* Add other routes */}
-        {/* <Route path="/list" element={<ListPage />} /> */}
-        {/* <Route path="/recommendations" element={<RecommendationsPage />} /> */}
-      </Routes>
+      <Container maxWidth="lg">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+        </Routes>
+      </Container>
     </Router>
   );
 }
