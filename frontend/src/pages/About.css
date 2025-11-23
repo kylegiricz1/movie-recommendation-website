@@ -6,8 +6,14 @@
 }
 
 .about-section-container {
-    background-color: rgb(193, 189, 189);
-    border: 1px solid black;
+    background-color: rgba(193, 189, 189, 0.336);
     border-radius: 8px;
     margin-bottom: 5px;
+    padding: 20px;
+}
+
+.about-main {
+    padding: 40px;
+    background-color: #f4f6f8;
+    min-height: 100vh;
 }
