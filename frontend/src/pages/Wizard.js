@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import Table from "../components/Table";
+import RecommendationCheckBox from "../components/RecommendationCheckBox";
 import "./Wizard.css";
 
 const QUESTIONS = [
@@ -54,8 +55,19 @@ export default function Wizard() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [result, setResult] = useState(null);
+    const [saved, setSaved] = useState(false); //Checkbox save state
 
     const q = QUESTIONS[step];
+
+    //Save movie to localStorage
+    function saveMovieToLocalStorage(movie) {
+        const existing = JSON.parse(localStorage.getItem("savedMovies") || "[]");
+
+        if (!existing.some(m => m.title === movie.title)) {
+            existing.push(movie);
+            localStorage.setItem("savedMovies", JSON.stringify(existing));
+        }
+    }
 
     function updateAnswer(id, value, isMulti = false) {
         if (isMulti) {
@@ -109,6 +121,7 @@ export default function Wizard() {
                 <div className="wizard-container">
                     <div className="wizard-card">
                         {error && <div className="wizard-error">{error}</div>}
+
                         {result.noMatches || !result.movie ? (
                             <div className="no-matches">
                                 <h2>No Perfect Match Found</h2>
@@ -118,11 +131,15 @@ export default function Wizard() {
                             <div className="movie-recommendation">
                                 <h2>Your Perfect Movie Match!</h2>
                                 <p className="match-message">{result.message}</p>
+
                                 <div className="movie-details">
                                     <h3>{result.movie.title || "Title Not Available"}</h3>
+                                    
                                     <div className="movie-stats">
                                         {result.movie.release_date && (
-                                            <span className="movie-year">({result.movie.release_date.substring(0, 4)})</span>
+                                            <span className="movie-year">
+                                                ({result.movie.release_date.substring(0, 4)})
+                                            </span>
                                         )}
                                         {result.movie.vote_average && (
                                             <span className="movie-rating">★ {result.movie.vote_average}/10</span>
@@ -139,83 +156,110 @@ export default function Wizard() {
                                             Why you might like it: {result.summary}
                                         </div>
                                     )}
+                                    <div className="save-movie">
+                                        <label 
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                gap: "10px",
+                                                cursor: "pointer"
+                                            }}
+                                        >
+                                            <RecommendationCheckBox 
+                                                checked={saved}
+                                                onChange={(isChecked) => {
+                                                    setSaved(isChecked);
+                                                    if (isChecked) saveMovieToLocalStorage(result.movie);
+                                                }}
+                                            />
+                                            <span style={{ fontSize: "16px" }}>Save this movie</span>
+                                        </label>
+                                    </div>
+
                                 </div>
                             </div>
                         )}
+
                         <div className="wizard-controls">
-                            <button onClick={() => { setResult(null); setStep(0); setAnswers({}); }}>Try Again</button>
+                            <button onClick={() => { 
+                                setResult(null); 
+                                setStep(0); 
+                                setAnswers({});
+                                setSaved(false); 
+                            }}>
+                                Try Again
+                            </button>
                         </div>
+
                     </div>
                 </div>
             </div>
         );
     }
-
     return (
         <div>
             <Navbar />
             <div className="wizard-container">
                 <div className="wizard-card">
-                <h2>Question {step + 1} of {QUESTIONS.length}</h2>
 
-                <label className="wizard-question">{q.text}</label>
+                    <h2>Question {step + 1} of {QUESTIONS.length}</h2>
+                    <label className="wizard-question">{q.text}</label>
 
-                {(q.type === "choice" || q.type === "multiChoice") && (
-                    <div className="wizard-options">
-                        {q.options.map(opt => (
-                            <label key={opt} className="wizard-option">
-                                <input
-                                    type={q.type === "multiChoice" ? "checkbox" : "radio"}
-                                    name={q.id}
-                                    value={opt}
-                                    checked={q.type === "multiChoice" 
-                                        ? (answers[q.id] || []).includes(opt)
-                                        : answers[q.id] === opt
-                                    }
-                                    onChange={() => updateAnswer(q.id, opt, q.type === "multiChoice")}
-                                />
-                                {opt}
-                            </label>
-                        ))}
-                    </div>
-                )}
-
-                {q.type === "text" && (
-                    <input
-                        className="wizard-input"
-                        type="text"
-                        placeholder={q.placeholder || ""}
-                        value={answers[q.id] || ""}
-                        onChange={(e) => updateAnswer(q.id, e.target.value)}
-                    />
-                )}
-
-                <div className="wizard-controls">
-                    <button
-                        onClick={() => setStep(s => Math.max(0, s - 1))}
-                        disabled={step === 0 || loading}
-                    >
-                        Back
-                    </button>
-
-                    {step < QUESTIONS.length - 1 ? (
-                        <button
-                            onClick={() => setStep(s => Math.min(QUESTIONS.length - 1, s + 1))}
-                            disabled={!canProceed() || loading}
-                        >
-                            Next
-                        </button>
-                    ) : (
-                        <button
-                            onClick={handleSubmit}
-                            disabled={!canProceed() || loading}
-                        >
-                            {loading ? "Submitting..." : "Submit"}
-                        </button>
+                    {(q.type === "choice" || q.type === "multiChoice") && (
+                        <div className="wizard-options">
+                            {q.options.map(opt => (
+                                <label key={opt} className="wizard-option">
+                                    <input
+                                        type={q.type === "multiChoice" ? "checkbox" : "radio"}
+                                        name={q.id}
+                                        value={opt}
+                                        checked={q.type === "multiChoice" 
+                                            ? (answers[q.id] || []).includes(opt)
+                                            : answers[q.id] === opt
+                                        }
+                                        onChange={() => updateAnswer(q.id, opt, q.type === "multiChoice")}
+                                    />
+                                    {opt}
+                                </label>
+                            ))}
+                        </div>
                     )}
-                </div>
 
-                {error && <div className="wizard-error">{error}</div>}
+                    {q.type === "text" && (
+                        <input
+                            className="wizard-input"
+                            type="text"
+                            placeholder={q.placeholder || ""}
+                            value={answers[q.id] || ""}
+                            onChange={(e) => updateAnswer(q.id, e.target.value)}
+                        />
+                    )}
+
+                    <div className="wizard-controls">
+                        <button
+                            onClick={() => setStep(s => Math.max(0, s - 1))}
+                            disabled={step === 0 || loading}
+                        >
+                            Back
+                        </button>
+
+                        {step < QUESTIONS.length - 1 ? (
+                            <button
+                                onClick={() => setStep(s => Math.min(QUESTIONS.length - 1, s + 1))}
+                                disabled={!canProceed() || loading}
+                            >
+                                Next
+                            </button>
+                        ) : (
+                            <button
+                                onClick={handleSubmit}
+                                disabled={!canProceed() || loading}
+                            >
+                                {loading ? "Submitting..." : "Submit"}
+                            </button>
+                        )}
+                    </div>
+                    {error && <div className="wizard-error">{error}</div>}
                 </div>
             </div>
         </div>

@@ -79,3 +79,10 @@
     color: #27ae60;
     font-weight: 500;
 }
+
+/* Rating column formatting */
+#movieTable td:nth-child(3),
+#movieTable td:nth-child(4) {
+    color: #34495e;
+    font-weight: 500;
+}
