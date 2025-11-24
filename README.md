@@ -6,7 +6,7 @@ You need to run both the back-end and the front-end at the same time (so 2 diffe
 
 For the front-end (React):
 - Open a terminal and go to the front-end folder.
-- Run `npm install` and `npm install cross-env` (to install all required libraries)
+- Run `npm install`, `npm install cross-env`, `npm install @mui/material @emotion/react @emotion/styled`, and `npm install ogl` (to install all required libraries)
 - Then run `npm start` (to start the front-end)
 
 For the back-end (Flask):
