@@ -1,0 +1,52 @@
+.rec-checkbox {
+    position: relative;
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.rec-checkbox input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 18px;
+    width: 18px;
+    background-color: #eee;
+    border-radius: 4px;
+    transition: 0.2s ease;
+}
+
+.rec-checkbox:hover .checkmark {
+    background-color: #ddd;
+}
+
+.rec-checkbox input:checked ~ .checkmark {
+    background-color: #1976d2;
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.rec-checkbox input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.rec-checkbox .checkmark:after {
+    left: 6px;
+    top: 2px;
+    width: 4px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}

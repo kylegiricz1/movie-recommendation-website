@@ -1,19 +1,28 @@
-.about-section {
-    max-width: 800px;
-    padding: 5px;
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
+/* Make the page fill the viewport */
+.home {
+  min-height: 100vh;
+  background: #000; /* fallback */
+  color: #fff;
 }
 
-.about-section-container {
-    background-color: rgba(193, 189, 189, 0.336);
-    border-radius: 8px;
-    margin-bottom: 5px;
-    padding: 20px;
+/* Wrapper that holds bg + content */
+.home-hero {
+  position: relative;
+  min-height: 60vh; /* or 100vh if you want full screen */
+  overflow: hidden;
 }
 
-.about-main {
-    padding: 40px;
-    background-color: #f4f6f8;
-    min-height: 100vh;
+/* DarkVeil background */
+.home-hero-bg {
+  position: absolute;
+  inset: 0; /* top:0 right:0 bottom:0 left:0 */
 }
+
+/* Content on top of the background */
+.home-hero-content {
+  position: relative;
+  z-index: 1;
+  padding: 3rem 2rem;
+}
+
+/* You can keep your existing styles for .home-section, etc. */
