@@ -19,7 +19,6 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/recommendations" element={<Recommendations />} />
         <Route path="/wizard" element={<Wizard />} />
-        <Route path="/test-dark-veil" element={<TestDarkVeil />} />
         
       </Routes>
     </Router>
