@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Navbar from "../components/Navbar";
 import Table from "../components/Table.js";
 import "./List.css";
+import { CircularProgress } from "@mui/material";
+import Button from '@mui/material/Button';
 
 function List() {
   const [data, setData] = useState(null);
@@ -247,7 +249,7 @@ function List() {
           <input type="number" name="year" id="year"/>
           &nbsp;
         </label>
-        <button type="submit">Search!</button>
+        <Button variant="contained" type="submit">Search!</Button>
       </form>
       <br></br>
       <br></br>
@@ -264,7 +266,7 @@ function List() {
 
       { // Show loading text in meantime
         (errorMessage === "" && data === null) ?
-        (<p style={{ textAlign: "center"}}><b>Loading movies...</b></p>): ""
+        (<p style={{ textAlign: "center"}}><CircularProgress /><br></br><b>Loading movies...</b></p>): ""
       }
 
       { // Print error message from server if any
