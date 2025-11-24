@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
-import { Container, Paper, Typography, Button, TextField, FormGroup, FormControlLabel, Checkbox, Radio, RadioGroup, Box, CircularProgress } from "@mui/material";
+import RecommendationCheckBox from "../components/RecommendationCheckBox";
+import {Container,Paper,Typography,Button,TextField,FormGroup,FormControlLabel,Checkbox,Radio,RadioGroup,Box,CircularProgress} from "@mui/material";
 
 const QUESTIONS = [
   {
@@ -53,8 +54,19 @@ export default function Wizard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
+  const [saved, setSaved] = useState(false);
 
   const q = QUESTIONS[step];
+
+  // Save movie locally so it appears in Recommendations
+  function saveMovieToLocalStorage(movie) {
+    const existing = JSON.parse(localStorage.getItem("savedMovies") || "[]");
+
+    if (!existing.some(m => m.title === movie.title)) {
+      existing.push(movie);
+      localStorage.setItem("savedMovies", JSON.stringify(existing));
+    }
+  }
 
   function updateAnswer(id, value, isMulti = false) {
     if (isMulti) {
@@ -108,6 +120,7 @@ export default function Wizard() {
         <Container maxWidth="sm" sx={{ marginTop: 4 }}>
           <Paper sx={{ padding: 3 }}>
             {error && <Typography color="error">{error}</Typography>}
+
             {result.noMatches || !result.movie ? (
               <Box textAlign="center">
                 <Typography variant="h5" color="error" gutterBottom>No Perfect Match Found</Typography>
@@ -117,20 +130,49 @@ export default function Wizard() {
               <Box textAlign="center">
                 <Typography variant="h5" gutterBottom>Your Perfect Movie Match!</Typography>
                 <Typography color="success.main" mb={2}>{result.message}</Typography>
+
                 <Paper sx={{ padding: 2, textAlign: "left", backgroundColor: "#f8f9fa" }}>
-                  <Typography variant="h6" color="primary">{result.movie.title || "Title Not Available"}</Typography>
+                  <Typography variant="h6" color="primary">
+                    {result.movie.title || "Title Not Available"}
+                  </Typography>
+
                   <Box display="flex" gap={2} mb={1} color="text.secondary">
                     {result.movie.release_date && <span>({result.movie.release_date.substring(0,4)})</span>}
                     {result.movie.vote_average && <span>★ {result.movie.vote_average}/10</span>}
                     {result.movie.runtime && <span>{result.movie.runtime} mins</span>}
                   </Box>
+
                   {result.movie.overview && <Typography mb={1}>{result.movie.overview}</Typography>}
                   {result.summary && <Typography>Why you might like it: {result.summary}</Typography>}
+
+                  {/* SAVE CHECKBOX */}
+                  <Box display="flex" alignItems="center" gap={1} mt={2}>
+                    <RecommendationCheckBox
+                      checked={saved}
+                      onChange={(isChecked) => {
+                        setSaved(isChecked);
+                        if (isChecked) saveMovieToLocalStorage(result.movie);
+                      }}
+                    />
+                    <Typography>Save this movie</Typography>
+                  </Box>
+
                 </Paper>
               </Box>
             )}
+
             <Box display="flex" justifyContent="flex-end" mt={2}>
-              <Button variant="contained" onClick={() => { setResult(null); setStep(0); setAnswers({}); }}>Try Again</Button>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  setResult(null);
+                  setStep(0);
+                  setAnswers({});
+                  setSaved(false);
+                }}
+              >
+                Try Again
+              </Button>
             </Box>
           </Paper>
         </Container>
@@ -138,6 +180,9 @@ export default function Wizard() {
     );
   }
 
+  // ----------------------------
+  // QUESTION SCREEN
+  // ----------------------------
   return (
     <div>
       <Navbar />
