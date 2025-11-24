@@ -1,28 +1,23 @@
-/* Parent section so the background can fill it */
-.hero {
+/* HomePage.css */
+.home {
+  min-height: 100vh;
+  background: #000;
+  color: #fff;
+}
+
+.home-hero {
   position: relative;
-  min-height: 80vh;   /* or 100vh for full screen */
-  width: 100%;
+  min-height: 60vh;
+  overflow: hidden;
 }
 
-.home-section-container {
-    background-color: rgba(193, 189, 189, 0.336);
-    border-radius: 8px;
-    margin-bottom: 5px;
-    padding: 20px;
+.home-hero-bg {
+  position: absolute;
+  inset: 0;
 }
 
-.home-main {
-    padding: 40px;
-    background-color: #f4f6f8;
-    min-height: 100vh;
-}
-
-.movie-link {
-  text-decoration: none;
-  color: blue;
-}
-
-.movie-link:hover {
-  color: darkblue; /* change this to any color */
+.home-hero-content {
+  position: relative;
+  z-index: 1;
+  padding: 3rem 2rem;
 }
