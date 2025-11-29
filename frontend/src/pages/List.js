@@ -4,11 +4,49 @@ import Table from "../components/Table.js";
 import "./List.css";
 import { CircularProgress } from "@mui/material";
 import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+import Stack from '@mui/material/Stack';
 
 function List() {
   const [data, setData] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [initialLoaded, setIntitialLoaded] = useState(false);
+  const [selectedGenres, setSelectedGenres] = useState([]);
+  const [selectedRatings, setSelectedRatings] = useState([]);
+
+  const genres = [
+      "Action",
+      "Adventure",
+      "Animation",
+      "Comedy",
+      "Crime",
+      "Documentary",
+      "Drama",
+      "Family",
+      "Fantasy",
+      "History",
+      "Horror",
+      "Mystery",
+      "Romance",
+      "Science Fiction",
+      "Thriller",
+      "War",
+      "Western"
+  ];
+
+  const ratings = [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9"
+  ];
 
       // If externalData is provided by a parent (e.g., Wizard), use it; otherwise fetch from backend
     const URL = window.location.origin.replace("5000", "5200") + "/data";
@@ -39,8 +77,8 @@ function List() {
   async function handleSubmit (e) {
     e.preventDefault(); // Prevent page reload
 
-    var genres = updateGenres();
-    var ratings = updateRatings();
+    var genres = selectedGenres;
+    var ratings = selectedRatings;
     var year = document.getElementById("year").value;
 
     // Reset data
@@ -77,182 +115,89 @@ function List() {
     }
   }
 
-  function updateGenres() {
-    var checkboxes = document.getElementsByClassName("genre-list");
-    var buttonText = "Selected Genres: "
-    var genres = []
-
-    // Get all selected genre checkboxes
-    for (let i = 0; i < checkboxes.length; i++) {
-        if (checkboxes[i].checked) {
-          genres.push(checkboxes[i].value);
-          buttonText += checkboxes[i].value + ", "
-        }
-    }
-
-    // Update button text
-    if (genres.length == 0) {
-      buttonText = "Selected Genres: None  "
-    }
-    document.getElementById("genre-button").innerHTML = buttonText.substring(0, buttonText.length - 2);
-
-    return genres;
-  }
-
-  function updateRatings() {
-    var checkboxes = document.getElementsByClassName("rating-list");
-    var buttonText = "Selected Ratings: "
-    var ratings = []
-
-    // Get all selected rating checkboxes
-    for (let i = 0; i < checkboxes.length; i++) {
-        if (checkboxes[i].checked) {
-          ratings.push(checkboxes[i].value);
-          buttonText += checkboxes[i].value + ", "
-        }
-    }
-
-    // Update button text
-    if (ratings.length == 0) {
-      buttonText = "Selected Ratings: None  "
-    }
-    document.getElementById("rating-button").innerHTML = buttonText.substring(0, buttonText.length - 2);
-
-    return ratings;
-  }
-
   return (
     <div>
       <Navbar/>
       <h1>List of Movies</h1>
-      <form onSubmit={handleSubmit} style={{display: "flex"}}>
-        <div class="genre-section">
-          <button id="genre-button" style={{margin: "10px"}}>Selected Genres: None</button>
-        <div class="genre-menu">
-        <label>
-          <input type="checkbox" class="genre-list" value="action" onChange={updateGenres}/>Action
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="adventure" onChange={updateGenres}/>Adventure
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="animation" onChange={updateGenres}/>Animation
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="comedy" onChange={updateGenres}/>Comedy
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="crime" onChange={updateGenres}/>Crime
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="documentary" onChange={updateGenres}/>Documentary
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="drama" onChange={updateGenres}/>Drama
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="family" onChange={updateGenres}/>Family
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="fantasy" onChange={updateGenres}/>Fantasy
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="history" onChange={updateGenres}/>History
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="horror" onChange={updateGenres}/>Horror
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="mystery" onChange={updateGenres}/>Mystery
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="romance" onChange={updateGenres}/>Romance
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="science fiction" onChange={updateGenres}/>Science Fiction
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="thriller" onChange={updateGenres}/>Thriller
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="war" onChange={updateGenres}/>War
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="western" onChange={updateGenres}/>Western
-        </label>
-        </div>
-        </div>
+      <form onSubmit={handleSubmit}>
+        <Stack direction="row" spacing={2}>
+          <Autocomplete
+            multiple
+            id="genres-select"
+            options={genres}
+            disableCloseOnSelect
+            getOptionLabel={(option) => option}
+            sx={{ minWidth: 300 }}
+            onChange={(event, value) => {
+              // Convert each selected item into the right format for the back-end filter
+              var selected = [];
+              value.forEach((element) => {
+                selected.push(element.toLowerCase().replace(" ", "-"));
+              });
+              setSelectedGenres(selected);
+            }}
 
-        <div class="rating-section">
-          <button id="rating-button" style={{margin: "10px"}}>Selected Ratings: None</button>
-        <div class="rating-menu">
-        <label>
-          <input type="checkbox" class="rating-list" value="1" onChange={updateRatings}/>1/10
-        </label>
-        <br></br>
-               <label>
-          <input type="checkbox" class="rating-list" value="2" onChange={updateRatings}/>2/10
-        </label>
-        <br></br>
-               <label>
-          <input type="checkbox" class="rating-list" value="3" onChange={updateRatings}/>3/10
-        </label>
-        <br></br>
-               <label>
-          <input type="checkbox" class="rating-list" value="4" onChange={updateRatings}/>4/10
-        </label>
-        <br></br>
-               <label>
-          <input type="checkbox" class="rating-list" value="5" onChange={updateRatings}/>5/10
-        </label>
-        <br></br>
-               <label>
-          <input type="checkbox" class="rating-list" value="6" onChange={updateRatings}/>6/10
-        </label>
-        <br></br>
-               <label>
-          <input type="checkbox" class="rating-list" value="7" onChange={updateRatings}/>7/10
-        </label>
-        <br></br>
-               <label>
-          <input type="checkbox" class="rating-list" value="8" onChange={updateRatings}/>8/10
-        </label>
-        <br></br>
-               <label>
-          <input type="checkbox" class="rating-list" value="9" onChange={updateRatings}/>9/10
-        </label>
-        <br></br>
-        </div>
-        </div>
+            renderOption={(props, option, { selected }) => {
+              const { key, ...optionProps } = props;
+              // Put checkboxes for each list item
+              return (
+                <li key={key} {...optionProps}>
+                  <Checkbox
+                    style={{ marginRight: 8 }}
+                    checked={selected}
+                  />
+                  {option}
+                </li>
+              );
+            }}
 
+            renderInput={(params) => (
+              // The auto-complete textbox
+              <TextField {...params} label="Selected Genres" placeholder="Genres" />
+            )}
+          />
 
+          <Autocomplete
+            multiple
+            id="ratings-select"
+            options={ratings}
+            disableCloseOnSelect
+            getOptionLabel={(option) => option + "/10"}
+            sx={{ minWidth: 300 }}
+            onChange={(event, value) => { setSelectedRatings(value); }}
+            renderOption={(props, option, { selected }) => {
+              const { key, ...optionProps } = props;
+              // Put checkboxes for each individual item
+              return (
+                <li key={key} {...optionProps}>
+                  <Checkbox
+                    style={{ marginRight: 8 }}
+                    checked={selected}
+                  />
+                  {option + "/10"}
+                </li>
+              );
+            }}
 
-        <label style={{ margin: '10px'}}>
-          Release Year:
-          &nbsp;
-          <input type="number" name="year" id="year"/>
-          &nbsp;
-        </label>
-        <Button variant="contained" type="submit">Search!</Button>
+            renderInput={(params) => (
+              // Once again the auto-complete textbox
+              <TextField {...params} label="Selected Ratings" placeholder="Ratings" />
+            )}
+          />
+
+          <label style={{ margin: '10px'}}>
+            Release Year:
+            &nbsp;
+            <input type="number" name="year" id="year"/>
+            &nbsp;
+          </label>
+          
+          <Button variant="contained" type="submit">Search!</Button>
+        </Stack>
       </form>
       <br></br>
       <br></br>
+
       { // Show error message
         (errorMessage !== "") ?
         (<div style={{ textAlign: "center"}}>
