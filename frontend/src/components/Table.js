@@ -1,4 +1,6 @@
+import Rating from '@mui/material/Rating';
 import "./Table.css";
+
 function Table({ data }) {
     if (data != null && data.length == 0) {
         return (
@@ -46,7 +48,10 @@ function Table({ data }) {
                                 <td>{row.release_date}</td>
                                 <td>{JSON.parse(row.genres).map(item => item.name).join(", ")}</td>
                                 <td>{row.popularity}</td>
-                                <td>{row.vote_average}/10</td>
+                                <td>{row.vote_average}/10
+                                    <br></br>
+                                    <Rating name="read-only" value={row.vote_average / 2} precision={0.5} readOnly />
+                                </td>
                                 <td>{row.vote_count}</td>
                                 <td>${row.budget}</td>
                                 <td><i>{row.overview}</i></td>

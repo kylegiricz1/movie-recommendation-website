@@ -8,6 +8,9 @@ import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import Stack from '@mui/material/Stack';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 function List() {
   const [data, setData] = useState(null);
@@ -15,6 +18,7 @@ function List() {
   const [initialLoaded, setIntitialLoaded] = useState(false);
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [selectedRatings, setSelectedRatings] = useState([]);
+  const [selectedYear, setSelectedYear] = React.useState("");
 
   const genres = [
       "Action",
@@ -79,7 +83,7 @@ function List() {
 
     var genres = selectedGenres;
     var ratings = selectedRatings;
-    var year = document.getElementById("year").value;
+    var year = String(selectedYear);
 
     // Reset data
     setErrorMessage("");
@@ -184,13 +188,15 @@ function List() {
               <TextField {...params} label="Selected Ratings" placeholder="Ratings" />
             )}
           />
-
-          <label style={{ margin: '10px'}}>
-            Release Year:
-            &nbsp;
-            <input type="number" name="year" id="year"/>
-            &nbsp;
-          </label>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker label={"Release Year"} views={["year"]} onChange={(newValue, context) => {
+              if (context.validationError == null && newValue != null) {
+                setSelectedYear(newValue.year());
+              } else {
+                setSelectedYear("");
+              }
+            }}/>
+          </LocalizationProvider>
           
           <Button variant="contained" type="submit">Search!</Button>
         </Stack>
