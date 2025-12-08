@@ -77,3 +77,47 @@
     color: #c0392b;
     font-size: 1.1rem;
 }
+
+@media (max-width: 900px) {   /* You can adjust this breakpoint */
+
+    #movieTable thead {
+        display: none; /* hide header row */
+    }
+
+    #movieTable,
+    #movieTable tbody,
+    #movieTable tr,
+    #movieTable td {
+        display: block;
+        width: 100%;
+    }
+
+    #movieTable tr {
+        margin-bottom: 1.25rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px;
+        background-color: white;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    #movieTable td {
+        border-bottom: none;
+        padding: 8px 10px;
+        position: relative;
+        padding-left: 120px; /* space for the label */
+        text-align: left;
+    }
+
+    #movieTable td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 10px;
+        top: 8px;
+        font-weight: bold;
+        color: #2c3e50;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        opacity: 0.8;
+    }
+}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Navbar from "../components/Navbar";
 import Table from "../components/Table.js";
 import "./List.css";
@@ -124,7 +124,12 @@ function List() {
       <Navbar/>
       <h1>List of Movies</h1>
       <form onSubmit={handleSubmit}>
-        <Stack direction="row" spacing={2}>
+        <Stack 
+          direction={{ xs: "column", sm: "column", md: "row" }} 
+          spacing={2}
+          sx={{ width: "100%" }}
+        >
+
           <Autocomplete
             multiple
             id="genres-select"
@@ -190,7 +195,7 @@ function List() {
           />
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker label={"Release Year"} views={["year"]} onChange={(newValue, context) => {
-              if (context.validationError == null && newValue != null) {
+              if (context.validationError === null && newValue != null) {
                 setSelectedYear(newValue.year());
               } else {
                 setSelectedYear("");
@@ -234,7 +239,7 @@ function List() {
       { // Only show if there's data and no errors
         (data != null && errorMessage === "" && !data.error) ?
         (<div><div style={{ textAlign: "center"}}>
-                    <b>{data.length} { (data.length == 1) ? "movie" : "movies" } found.</b>
+                    <b>{data.length} { (data.length === 1) ? "movie" : "movies" } found.</b>
                 </div><Table data={data} /></div>) : ""
       }
     </div>

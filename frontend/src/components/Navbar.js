@@ -9,7 +9,6 @@ const PAGES = [
   { label: "Recommendations", path: "/recommendations" },
   { label: "Wizard", path: "/wizard" },
   { label: "About", path: "/about" },
-  { label: "Profile", path: "/profile" },
 ];
 
 function Navbar() {

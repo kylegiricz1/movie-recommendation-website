@@ -6,6 +6,7 @@ import math
 import os
 from google import genai
 import json
+import requests
 
 # Install Flask using pip install Flask (MAC "pip install Flask") 
 # # Run this file using python backend.py (MAC "python3 backend.py") 
@@ -22,7 +23,9 @@ MOVIE_CACHE = None
 # Gemini API Key
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 client = genai.Client(api_key=GOOGLE_API_KEY) if GOOGLE_API_KEY else None
-#client = genai.Client(api_key="YAIzaSyALQEfqLQ3bdKeRlSzBlDmmtZpJxCYKxME")
+
+# TMDB API Key
+TMDB_API_KEY = "b5552118abe82b25490d97d1a1467f6c"
 
 def load_movie_data():
     global MOVIE_CACHE
@@ -41,6 +44,44 @@ def load_movie_data():
             print(f"Error loading movie cache: {str(e)}")
             MOVIE_CACHE = []
     return MOVIE_CACHE
+
+def get_trailer_url(tmdb_id: str) -> str:
+    """
+    Given a TMDB movie ID, return a YouTube embed URL for a trailer.
+    Uses the hard-coded TMDB_API_KEY above.
+    """
+    if not TMDB_API_KEY or not tmdb_id:
+        print("TMDB_API_KEY or tmdb_id missing")
+        return ""
+
+    url = f"https://api.themoviedb.org/3/movie/{tmdb_id}/videos"
+    params = {
+        "api_key": TMDB_API_KEY,
+        "language": "en-US",
+    }
+
+    try:
+        resp = requests.get(url, params=params, timeout=5)
+        print("TMDB status:", resp.status_code)  # debug
+
+        resp.raise_for_status()
+        data = resp.json()
+
+        results = data.get("results", [])
+        # Prefer a YouTube Trailer
+        for v in results:
+            if v.get("site") == "YouTube" and v.get("type") == "Trailer":
+                return f"https://www.youtube.com/embed/{v['key']}"
+
+        # Fallback: any YouTube YouTube video for the movie
+        for v in results:
+            if v.get("site") == "YouTube":
+                return f"https://www.youtube.com/embed/{v['key']}"
+
+    except Exception as e:
+        print(f"TMDB trailer fetch error for {tmdb_id}: {e}")
+
+    return ""
 
 @app.route('/')
 def hello_name():
@@ -329,6 +370,8 @@ def wizard():
             bm_id = best_match.get('id') or best_match.get('movie_id') or ""
             tmdb_id = str(bm_id).strip()
         tmdb_url = f"https://www.themoviedb.org/movie/{tmdb_id}" if tmdb_id else ""
+        trailer_url = get_trailer_url(tmdb_id) if tmdb_id else ""
+
 
         # Compute a deterministic "match score" (1–10) based on how well it fits preferences
         # This is NOT quality; it’s alignment with the provided answers.
@@ -420,7 +463,9 @@ def wizard():
         "count": len(matches),
         "noMatches": False,
         "message": f"Found {len(matches)} movies matching your criteria!",
-        "summary": summary           
+        "summary": summary,
+        "tmdbUrl": tmdb_url,  
+        "trailerUrl": trailer_url         
     })
 #END API ADDITION
 

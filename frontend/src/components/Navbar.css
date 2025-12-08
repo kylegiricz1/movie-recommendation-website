@@ -34,3 +34,34 @@
 .navbar-links a:hover {
   color: grey;
 }
+
+/* PHONE — stack vertically */
+@media (max-width: 800px) {
+  .navbar .MuiTabs-flexContainer {
+    flex-direction: column !important;
+    width: 100%;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .navbar .MuiTab-root {
+    font-size: 0.8rem !important;
+    padding: 6px 0 !important;
+    min-height: 42px !important;
+  }
+
+  .navbar-logo {
+    font-size: 1.2rem !important;
+  }
+}
+
+/* TABLET — shrink spacing */
+@media (max-width: 900px) {
+  .navbar .MuiTabs-flexContainer {
+    gap: 1rem !important;
+  }
+
+  .navbar .MuiTab-root {
+    font-size: 0.7rem !important;
+  }
+}
