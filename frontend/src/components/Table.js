@@ -25,7 +25,7 @@ function Table({ data }) {
         }
     }
 
-    if (data != null && data.length == 0) {
+    if (data != null && data.length === 0) {
         return (
             <table border="2px solid" cellPadding="5" id="movieTable">
                 <thead>
@@ -67,34 +67,47 @@ function Table({ data }) {
                             // The different columns of the table
                             data.map((row, position) => (
                                 <tr key={position}>
-                                    <td><b>{row.title}</b></td>
-                                    <td>{row.release_date}</td>
-                                    <td>{JSON.parse(row.genres).map(item => item.name).join(", ")}</td>
-                                    <td>{row.popularity}</td>
-                                    <td>{row.vote_average}/10
-                                        <br></br>
-                                        <Rating name="read-only" value={row.vote_average / 2} precision={0.5} readOnly />
-                                    </td>
-                                    <td>{row.vote_count}</td>
-                                    <td>${row.budget}</td>
-                                    <td>
-                                        <i>{row.overview}</i>
-                                        <br></br>
-                                        <Button variant="text" 
-                                        onClick={(event) => { 
-                                            // Save movie to local storage
-                                            var response = saveMovieToLocalStorage(row);
+                                    <td data-label="Name"><b>{row.title}</b></td>
 
-                                            // Change button text
-                                            if (response == "success") {
-                                                event.target.innerHTML = "Saved!";
-                                            } else if (response == "duplicate") {
-                                                event.target.innerHTML = "Already saved!";
-                                            }
-                                        }
-                                        }>Save this movie</Button>
+                                    <td data-label="Date Released">{row.release_date}</td>
+
+                                    <td data-label="Genres">
+                                        {JSON.parse(row.genres).map(item => item.name).join(", ")}
+                                    </td>
+
+                                    <td data-label="Popularity">{row.popularity}</td>
+
+                                    <td data-label="Vote Average">
+                                        {row.vote_average}/10
+                                        <br />
+                                        <Rating 
+                                            name="read-only" 
+                                            value={row.vote_average / 2} 
+                                            precision={0.5} 
+                                            readOnly 
+                                        />
+                                    </td>
+
+                                    <td data-label="Vote Count">{row.vote_count}</td>
+
+                                    <td data-label="Budget">${row.budget}</td>
+
+                                    <td data-label="Overview">
+                                        <i>{row.overview}</i>
+                                        <br />
+                                        <Button
+                                            variant="text"
+                                            onClick={(event) => {
+                                                const response = saveMovieToLocalStorage(row);
+                                                if (response === "success") event.target.innerHTML = "Saved!";
+                                                if (response === "duplicate") event.target.innerHTML = "Already saved!";
+                                            }}
+                                        >
+                                            Save this movie
+                                        </Button>
                                     </td>
                                 </tr>
+
                             ))
                         }
                     </tbody>
