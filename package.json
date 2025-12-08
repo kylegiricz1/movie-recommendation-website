@@ -1,9 +1,10 @@
 {
   "dependencies": {
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.1",
-    "@mui/material": "^7.3.5",
-    "react-is": "^18.3.1",
-    "requirements": "^3.0.0"
+    "@mui/icons-material": "^7.3.6",
+    "@mui/lab": "^7.0.1-beta.20",
+    "@mui/material": "^7.3.6",
+    "@mui/x-date-pickers": "^8.21.0",
+    "dayjs": "^1.11.19",
+    "ogl": "^1.0.11"
   }
 }

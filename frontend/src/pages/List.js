@@ -1,144 +1,242 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from "../components/Navbar";
 import Table from "../components/Table.js";
-import { Button, Menu, MenuItem, Checkbox, FormControlLabel, TextField } from '@mui/material';
 import "./List.css";
+import { CircularProgress } from "@mui/material";
+import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+import Stack from '@mui/material/Stack';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 function List() {
   const [data, setData] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
-  const [initialLoaded, setInitialLoaded] = useState(false);
-
-  const URL = window.location.origin.replace("5000", "5200") + "/data";
-  const URL_filtered = window.location.origin.replace("5000", "5200") + "/data_filtered";
-
-  const [genresAnchor, setGenresAnchor] = useState(null);
-  const [ratingsAnchor, setRatingsAnchor] = useState(null);
+  const [initialLoaded, setIntitialLoaded] = useState(false);
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [selectedRatings, setSelectedRatings] = useState([]);
-  const [year, setYear] = useState('');
+  const [selectedYear, setSelectedYear] = React.useState("");
 
-  const genreOptions = [
-    'action','adventure','animation','comedy','crime','documentary','drama','family','fantasy',
-    'history','horror','mystery','romance','science fiction','thriller','war','western'
+  const genres = [
+      "Action",
+      "Adventure",
+      "Animation",
+      "Comedy",
+      "Crime",
+      "Documentary",
+      "Drama",
+      "Family",
+      "Fantasy",
+      "History",
+      "Horror",
+      "Mystery",
+      "Romance",
+      "Science Fiction",
+      "Thriller",
+      "War",
+      "Western"
   ];
-  const ratingOptions = ['1','2','3','4','5','6','7','8','9'];
 
-  // Fetch initial data once
-  useEffect(() => {
+  const ratings = [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9"
+  ];
+
+      // If externalData is provided by a parent (e.g., Wizard), use it; otherwise fetch from backend
+    const URL = window.location.origin.replace("5000", "5200") + "/data";
+    const URL_filtered = window.location.origin.replace("5000", "5200") + "/data_filtered";
+
+    // Ensure this code is only called once and not every render
     if (!initialLoaded) {
+      // Fetch the data from the back-end
       fetch(URL)
-        .then(res => res.ok ? res.json() : Promise.reject(res.statusText))
-        .then(json => setData(json))
-        .catch(err => setErrorMessage(err.toString()));
-      setInitialLoaded(true);
-    }
-  }, [initialLoaded]);
+      .then(response => {
+          // HTTP errors
+          if (!response.ok) {
+              console.error("Something went wrong! \n Error: ", response.status + "\n" + response.statusText);
+              setErrorMessage(response.status + "\n" + response.statusText);
+          } else {
+              return response.json();
+          }
+      })
+      .then(json => setData(json))
+      .catch(error => {
+          // Other errors
+          console.error("Something went wrong! \n Error: ", error);
+          setErrorMessage(error.name + "\n" + error.message);
+      });
+      setIntitialLoaded(true);
+  }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  async function handleSubmit (e) {
+    e.preventDefault(); // Prevent page reload
+
+    var genres = selectedGenres;
+    var ratings = selectedRatings;
+    var year = String(selectedYear);
+
+    // Reset data
     setErrorMessage("");
     setData(null);
 
     try {
-      const response = await fetch(URL_filtered, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ genres: selectedGenres, ratings: selectedRatings, year })
-      });
-      if (!response.ok) throw new Error(response.statusText);
-      const responseData = await response.json();
-      setData(responseData);
-    } catch (err) {
-      setErrorMessage(err.message);
+        // Send filters to back-end
+        const response = await fetch(URL_filtered, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ "genres": genres, "ratings": ratings, "year": year })
+        });
+
+        // Something went wrong!
+        if (!response.ok) {
+          setErrorMessage("Something went wrong when retrieveing the data! \n" + response.status + " " + response.statusText);
+          return
+        }
+
+        const responseData = await response.json();
+
+        // Response was empty
+        if (!responseData) {
+          setErrorMessage("No data was returned!");
+        }
+        
+        // Update with new data
+        setData(responseData)
+    } catch (error) {
+        // Something else went wrong
+        setErrorMessage("Something went wrong when retrieveing the data! \n" + error.message);
+        setData(null);
     }
-  };
-
-  const toggleGenre = (genre) => {
-    setSelectedGenres(prev => prev.includes(genre) ? prev.filter(g => g !== genre) : [...prev, genre]);
-  };
-
-  const toggleRating = (rating) => {
-    setSelectedRatings(prev => prev.includes(rating) ? prev.filter(r => r !== rating) : [...prev, rating]);
-  };
+  }
 
   return (
     <div>
-      <Navbar />
+      <Navbar/>
       <h1>List of Movies</h1>
-      <form onSubmit={handleSubmit} style={{display: "flex", flexWrap: "wrap", gap: "10px", alignItems: "center"}}>
-        {/* Genre Dropdown */}
-        <div>
-          <Button
-            variant="contained"
-            color="success"
-            onClick={(e) => setGenresAnchor(e.currentTarget)}
-          >
-            Selected Genres: {selectedGenres.length > 0 ? selectedGenres.join(", ") : "None"}
-          </Button>
-          <Menu
-            anchorEl={genresAnchor}
-            open={Boolean(genresAnchor)}
-            onClose={() => setGenresAnchor(null)}
-          >
-            {genreOptions.map(genre => (
-              <MenuItem key={genre}>
-                <FormControlLabel
-                  control={<Checkbox checked={selectedGenres.includes(genre)} onChange={() => toggleGenre(genre)} />}
-                  label={genre.charAt(0).toUpperCase() + genre.slice(1)}
-                />
-              </MenuItem>
-            ))}
-          </Menu>
-        </div>
+      <form onSubmit={handleSubmit}>
+        <Stack direction="row" spacing={2}>
+          <Autocomplete
+            multiple
+            id="genres-select"
+            options={genres}
+            disableCloseOnSelect
+            getOptionLabel={(option) => option}
+            sx={{ minWidth: 300 }}
+            onChange={(event, value) => {
+              // Convert each selected item into the right format for the back-end filter
+              var selected = [];
+              value.forEach((element) => {
+                selected.push(element.toLowerCase().replace(" ", "-"));
+              });
+              setSelectedGenres(selected);
+            }}
 
-        {/* Rating Dropdown */}
-        <div>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={(e) => setRatingsAnchor(e.currentTarget)}
-          >
-            Selected Ratings: {selectedRatings.length > 0 ? selectedRatings.join(", ") : "None"}
-          </Button>
-          <Menu
-            anchorEl={ratingsAnchor}
-            open={Boolean(ratingsAnchor)}
-            onClose={() => setRatingsAnchor(null)}
-          >
-            {ratingOptions.map(r => (
-              <MenuItem key={r}>
-                <FormControlLabel
-                  control={<Checkbox checked={selectedRatings.includes(r)} onChange={() => toggleRating(r)} />}
-                  label={`${r}/10`}
-                />
-              </MenuItem>
-            ))}
-          </Menu>
-        </div>
+            renderOption={(props, option, { selected }) => {
+              const { key, ...optionProps } = props;
+              // Put checkboxes for each list item
+              return (
+                <li key={key} {...optionProps}>
+                  <Checkbox
+                    style={{ marginRight: 8 }}
+                    checked={selected}
+                  />
+                  {option}
+                </li>
+              );
+            }}
 
-        {/* Year Input */}
-        <TextField
-          type="number"
-          label="Release Year"
-          value={year}
-          onChange={(e) => setYear(e.target.value)}
-        />
+            renderInput={(params) => (
+              // The auto-complete textbox
+              <TextField {...params} label="Selected Genres" placeholder="Genres" />
+            )}
+          />
 
-        <Button type="submit" variant="contained" color="secondary">Search!</Button>
+          <Autocomplete
+            multiple
+            id="ratings-select"
+            options={ratings}
+            disableCloseOnSelect
+            getOptionLabel={(option) => option + "/10"}
+            sx={{ minWidth: 300 }}
+            onChange={(event, value) => { setSelectedRatings(value); }}
+            renderOption={(props, option, { selected }) => {
+              const { key, ...optionProps } = props;
+              // Put checkboxes for each individual item
+              return (
+                <li key={key} {...optionProps}>
+                  <Checkbox
+                    style={{ marginRight: 8 }}
+                    checked={selected}
+                  />
+                  {option + "/10"}
+                </li>
+              );
+            }}
+
+            renderInput={(params) => (
+              // Once again the auto-complete textbox
+              <TextField {...params} label="Selected Ratings" placeholder="Ratings" />
+            )}
+          />
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker label={"Release Year"} views={["year"]} onChange={(newValue, context) => {
+              if (context.validationError == null && newValue != null) {
+                setSelectedYear(newValue.year());
+              } else {
+                setSelectedYear("");
+              }
+            }}/>
+          </LocalizationProvider>
+          
+          <Button variant="contained" type="submit">Search!</Button>
+        </Stack>
       </form>
+      <br></br>
+      <br></br>
 
-      <div style={{ marginTop: "20px", textAlign: "center" }}>
-        {errorMessage && <div><b>Error:</b><br />{errorMessage}</div>}
-        {!errorMessage && data === null && <p><b>Loading movies...</b></p>}
-        {data?.error && <div><b>Server-side error:</b><br />{data.error}</div>}
-        {data && !data.error && (
-          <>
-            <b>{data.length} {data.length === 1 ? "movie" : "movies"} found.</b>
-            <Table data={data} />
-          </>
-        )}
-      </div>
+      { // Show error message
+        (errorMessage !== "") ?
+        (<div style={{ textAlign: "center"}}>
+                    <b>Something went wrong when retrieving the movies!</b>
+                    <br></br>
+                    Error:
+                    <br></br>
+                    {errorMessage}
+                </div>) : ""
+      }
+
+      { // Show loading text in meantime
+        (errorMessage === "" && data === null) ?
+        (<p style={{ textAlign: "center"}}><CircularProgress /><br></br><b>Loading movies...</b></p>): ""
+      }
+
+      { // Print error message from server if any
+        (data != null && data.error) ?
+                (<div style={{ textAlign: "center"}}>
+                    <b>The server said something went wrong when retrieving the movies!</b>
+                    <br></br>
+                    Server-side error:
+                    <br></br>
+                    {data.error}
+                </div>) : ""
+      }
+
+      { // Only show if there's data and no errors
+        (data != null && errorMessage === "" && !data.error) ?
+        (<div><div style={{ textAlign: "center"}}>
+                    <b>{data.length} { (data.length == 1) ? "movie" : "movies" } found.</b>
+                </div><Table data={data} /></div>) : ""
+      }
     </div>
   );
 }

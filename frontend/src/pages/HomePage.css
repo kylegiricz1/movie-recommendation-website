@@ -1,19 +1,23 @@
-.home-section {
-    max-width: 800px;
-    padding: 5px;
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
+/* HomePage.css */
+.home {
+  min-height: 100vh;
+  background: #000;
+  color: #fff;
 }
 
-.home-section-container {
-    background-color: rgba(193, 189, 189, 0.336);
-    border-radius: 8px;
-    margin-bottom: 5px;
-    padding: 20px;
+.home-hero {
+  position: relative;
+  min-height: 60vh;
+  overflow: hidden;
 }
 
-.home-main {
-    padding: 40px;
-    background-color: #f4f6f8;
-    min-height: 100vh;
+.home-hero-bg {
+  position: absolute;
+  inset: 0;
+}
+
+.home-hero-content {
+  position: relative;
+  z-index: 1;
+  padding: 3rem 2rem;
 }

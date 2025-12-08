@@ -18,6 +18,10 @@ jobs:
         run: |
             npm install
             npm install cross-env
+            npm install @mui/material @emotion/react @emotion/styled
+            npm install ogl
+            npm install @mui/x-date-pickers
+            npm install dayjs
       
       - name: Run tests
         working-directory: frontend

@@ -18,6 +18,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/recommendations" element={<Recommendations />} />
         <Route path="/wizard" element={<Wizard />} />
+        
       </Routes>
     </Router>
   );
