@@ -1,12 +1,10 @@
-// src/App.js
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import About from "./pages/About";
 import Recommendations from "./pages/Recommendations";
 import Wizard from "./pages/Wizard";
-import List from "./pages/List";
-// Import other pages/components as needed
+import { CssBaseline, Container } from "@mui/material";
 
 function App() {
   return (
