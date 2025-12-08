@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
-import "./Profile.css";
+import { Container, Paper, Typography, List, ListItem, ListItemText, CircularProgress, Box } from '@mui/material';
 
 function Profile() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
- 
+
   useEffect(() => {
     async function fetchUser() {
       try {
@@ -20,37 +20,49 @@ function Profile() {
         setLoading(false);
       }
     }
-    setUser({"name": "John Doe", "pastRecommendations": ["Inception", "The Matrix", "Interstellar"]});
+
+    setUser({
+      name: "John Doe",
+      pastRecommendations: ["Inception", "The Matrix", "Interstellar"]
+    });
     setLoading(false);
-    //fetchUser();
   }, []);
 
   return (
     <div>
-    <Navbar />
-    <div className="profile-container">
-      <h2>User Profile</h2>
+      <Navbar />
+      <Container maxWidth="sm" style={{ marginTop: "20px" }}>
+        <Paper elevation={3} style={{ padding: "20px", backgroundColor: "#eae7e7" }}>
+          <Typography variant="h4" gutterBottom>User Profile</Typography>
 
-      {loading && <p>Loading...</p>}
-      {error && <p>{error}</p>}
-
-      {!loading && !error && user && (
-        <div >
-          <p><strong>Name:</strong> {user.name}</p>
-
-          <h3>Past Recommendations</h3>
-          {user.pastRecommendations && user.pastRecommendations.length > 0 ? (
-            <ul className="recomendation-list">
-              {user.pastRecommendations.map((rec, index) => (
-                <li className="reccomendation" key={index}>{rec}</li>
-              ))}
-            </ul>
-          ) : (
-            <p>No past recommendations.</p>
+          {loading && (
+            <Box display="flex" justifyContent="center" alignItems="center" mt={2}>
+              <CircularProgress />
+            </Box>
           )}
-        </div>
-      )}
-    </div>
+
+          {error && <Typography color="error">{error}</Typography>}
+
+          {!loading && !error && user && (
+            <div>
+              <Typography variant="h6" gutterBottom><strong>Name:</strong> {user.name}</Typography>
+
+              <Typography variant="h6" gutterBottom>Past Recommendations</Typography>
+              {user.pastRecommendations && user.pastRecommendations.length > 0 ? (
+                <List>
+                  {user.pastRecommendations.map((rec, index) => (
+                    <ListItem key={index} style={{ marginBottom: "8px", backgroundColor: "#fff", border: "1px solid #ddd", borderRadius: "4px" }}>
+                      <ListItemText primary={rec} />
+                    </ListItem>
+                  ))}
+                </List>
+              ) : (
+                <Typography>No past recommendations.</Typography>
+              )}
+            </div>
+          )}
+        </Paper>
+      </Container>
     </div>
   );
 }

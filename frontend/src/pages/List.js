@@ -1,289 +1,144 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from "../components/Navbar";
 import Table from "../components/Table.js";
+import { Button, Menu, MenuItem, Checkbox, FormControlLabel, TextField } from '@mui/material';
 import "./List.css";
 
 function List() {
   const [data, setData] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
-  const [initialLoaded, setIntitialLoaded] = useState(false);
+  const [initialLoaded, setInitialLoaded] = useState(false);
 
-      // If externalData is provided by a parent (e.g., Wizard), use it; otherwise fetch from backend
-    const URL = window.location.origin.replace("5000", "5200") + "/data";
-    const URL_filtered = window.location.origin.replace("5000", "5200") + "/data_filtered";
+  const URL = window.location.origin.replace("5000", "5200") + "/data";
+  const URL_filtered = window.location.origin.replace("5000", "5200") + "/data_filtered";
 
-    // Ensure this code is only called once and not every render
+  const [genresAnchor, setGenresAnchor] = useState(null);
+  const [ratingsAnchor, setRatingsAnchor] = useState(null);
+  const [selectedGenres, setSelectedGenres] = useState([]);
+  const [selectedRatings, setSelectedRatings] = useState([]);
+  const [year, setYear] = useState('');
+
+  const genreOptions = [
+    'action','adventure','animation','comedy','crime','documentary','drama','family','fantasy',
+    'history','horror','mystery','romance','science fiction','thriller','war','western'
+  ];
+  const ratingOptions = ['1','2','3','4','5','6','7','8','9'];
+
+  // Fetch initial data once
+  useEffect(() => {
     if (!initialLoaded) {
-      // Fetch the data from the back-end
       fetch(URL)
-      .then(response => {
-          // HTTP errors
-          if (!response.ok) {
-              console.error("Something went wrong! \n Error: ", response.status + "\n" + response.statusText);
-              setErrorMessage(response.status + "\n" + response.statusText);
-          } else {
-              return response.json();
-          }
-      })
-      .then(json => setData(json))
-      .catch(error => {
-          // Other errors
-          console.error("Something went wrong! \n Error: ", error);
-          setErrorMessage(error.name + "\n" + error.message);
-      });
-      setIntitialLoaded(true);
-  }
+        .then(res => res.ok ? res.json() : Promise.reject(res.statusText))
+        .then(json => setData(json))
+        .catch(err => setErrorMessage(err.toString()));
+      setInitialLoaded(true);
+    }
+  }, [initialLoaded]);
 
-  async function handleSubmit (e) {
-    e.preventDefault(); // Prevent page reload
-
-    var genres = updateGenres();
-    var ratings = updateRatings();
-    var year = document.getElementById("year").value;
-
-    // Reset data
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setErrorMessage("");
     setData(null);
 
     try {
-        // Send filters to back-end
-        const response = await fetch(URL_filtered, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ "genres": genres, "ratings": ratings, "year": year })
-        });
-
-        // Something went wrong!
-        if (!response.ok) {
-          setErrorMessage("Something went wrong when retrieveing the data! \n" + response.status + " " + response.statusText);
-          return
-        }
-
-        const responseData = await response.json();
-
-        // Response was empty
-        if (!responseData) {
-          setErrorMessage("No data was returned!");
-        }
-        
-        // Update with new data
-        setData(responseData)
-    } catch (error) {
-        // Something else went wrong
-        setErrorMessage("Something went wrong when retrieveing the data! \n" + error.message);
-        setData(null);
+      const response = await fetch(URL_filtered, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ genres: selectedGenres, ratings: selectedRatings, year })
+      });
+      if (!response.ok) throw new Error(response.statusText);
+      const responseData = await response.json();
+      setData(responseData);
+    } catch (err) {
+      setErrorMessage(err.message);
     }
-  }
+  };
 
-  function updateGenres() {
-    var checkboxes = document.getElementsByClassName("genre-list");
-    var buttonText = "Selected Genres: "
-    var genres = []
+  const toggleGenre = (genre) => {
+    setSelectedGenres(prev => prev.includes(genre) ? prev.filter(g => g !== genre) : [...prev, genre]);
+  };
 
-    // Get all selected genre checkboxes
-    for (let i = 0; i < checkboxes.length; i++) {
-        if (checkboxes[i].checked) {
-          genres.push(checkboxes[i].value);
-          buttonText += checkboxes[i].value + ", "
-        }
-    }
-
-    // Update button text
-    if (genres.length == 0) {
-      buttonText = "Selected Genres: None  "
-    }
-    document.getElementById("genre-button").innerHTML = buttonText.substring(0, buttonText.length - 2);
-
-    return genres;
-  }
-
-  function updateRatings() {
-    var checkboxes = document.getElementsByClassName("rating-list");
-    var buttonText = "Selected Ratings: "
-    var ratings = []
-
-    // Get all selected rating checkboxes
-    for (let i = 0; i < checkboxes.length; i++) {
-        if (checkboxes[i].checked) {
-          ratings.push(checkboxes[i].value);
-          buttonText += checkboxes[i].value + ", "
-        }
-    }
-
-    // Update button text
-    if (ratings.length == 0) {
-      buttonText = "Selected Ratings: None  "
-    }
-    document.getElementById("rating-button").innerHTML = buttonText.substring(0, buttonText.length - 2);
-
-    return ratings;
-  }
+  const toggleRating = (rating) => {
+    setSelectedRatings(prev => prev.includes(rating) ? prev.filter(r => r !== rating) : [...prev, rating]);
+  };
 
   return (
     <div>
-      <Navbar/>
+      <Navbar />
       <h1>List of Movies</h1>
-      <form onSubmit={handleSubmit} style={{display: "flex"}}>
-        <div class="genre-section">
-          <button id="genre-button" style={{margin: "10px"}}>Selected Genres: None</button>
-        <div class="genre-menu">
-        <label>
-          <input type="checkbox" class="genre-list" value="action" onChange={updateGenres}/>Action
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="adventure" onChange={updateGenres}/>Adventure
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="animation" onChange={updateGenres}/>Animation
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="comedy" onChange={updateGenres}/>Comedy
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="crime" onChange={updateGenres}/>Crime
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="documentary" onChange={updateGenres}/>Documentary
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="drama" onChange={updateGenres}/>Drama
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="family" onChange={updateGenres}/>Family
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="fantasy" onChange={updateGenres}/>Fantasy
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="history" onChange={updateGenres}/>History
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="horror" onChange={updateGenres}/>Horror
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="mystery" onChange={updateGenres}/>Mystery
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="romance" onChange={updateGenres}/>Romance
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="science fiction" onChange={updateGenres}/>Science Fiction
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="thriller" onChange={updateGenres}/>Thriller
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="war" onChange={updateGenres}/>War
-        </label>
-        <br></br>
-        <label>
-          <input type="checkbox" class="genre-list" value="western" onChange={updateGenres}/>Western
-        </label>
-        </div>
+      <form onSubmit={handleSubmit} style={{display: "flex", flexWrap: "wrap", gap: "10px", alignItems: "center"}}>
+        {/* Genre Dropdown */}
+        <div>
+          <Button
+            variant="contained"
+            color="success"
+            onClick={(e) => setGenresAnchor(e.currentTarget)}
+          >
+            Selected Genres: {selectedGenres.length > 0 ? selectedGenres.join(", ") : "None"}
+          </Button>
+          <Menu
+            anchorEl={genresAnchor}
+            open={Boolean(genresAnchor)}
+            onClose={() => setGenresAnchor(null)}
+          >
+            {genreOptions.map(genre => (
+              <MenuItem key={genre}>
+                <FormControlLabel
+                  control={<Checkbox checked={selectedGenres.includes(genre)} onChange={() => toggleGenre(genre)} />}
+                  label={genre.charAt(0).toUpperCase() + genre.slice(1)}
+                />
+              </MenuItem>
+            ))}
+          </Menu>
         </div>
 
-        <div class="rating-section">
-          <button id="rating-button" style={{margin: "10px"}}>Selected Ratings: None</button>
-        <div class="rating-menu">
-        <label>
-          <input type="checkbox" class="rating-list" value="1" onChange={updateRatings}/>1/10
-        </label>
-        <br></br>
-               <label>
-          <input type="checkbox" class="rating-list" value="2" onChange={updateRatings}/>2/10
-        </label>
-        <br></br>
-               <label>
-          <input type="checkbox" class="rating-list" value="3" onChange={updateRatings}/>3/10
-        </label>
-        <br></br>
-               <label>
-          <input type="checkbox" class="rating-list" value="4" onChange={updateRatings}/>4/10
-        </label>
-        <br></br>
-               <label>
-          <input type="checkbox" class="rating-list" value="5" onChange={updateRatings}/>5/10
-        </label>
-        <br></br>
-               <label>
-          <input type="checkbox" class="rating-list" value="6" onChange={updateRatings}/>6/10
-        </label>
-        <br></br>
-               <label>
-          <input type="checkbox" class="rating-list" value="7" onChange={updateRatings}/>7/10
-        </label>
-        <br></br>
-               <label>
-          <input type="checkbox" class="rating-list" value="8" onChange={updateRatings}/>8/10
-        </label>
-        <br></br>
-               <label>
-          <input type="checkbox" class="rating-list" value="9" onChange={updateRatings}/>9/10
-        </label>
-        <br></br>
-        </div>
+        {/* Rating Dropdown */}
+        <div>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={(e) => setRatingsAnchor(e.currentTarget)}
+          >
+            Selected Ratings: {selectedRatings.length > 0 ? selectedRatings.join(", ") : "None"}
+          </Button>
+          <Menu
+            anchorEl={ratingsAnchor}
+            open={Boolean(ratingsAnchor)}
+            onClose={() => setRatingsAnchor(null)}
+          >
+            {ratingOptions.map(r => (
+              <MenuItem key={r}>
+                <FormControlLabel
+                  control={<Checkbox checked={selectedRatings.includes(r)} onChange={() => toggleRating(r)} />}
+                  label={`${r}/10`}
+                />
+              </MenuItem>
+            ))}
+          </Menu>
         </div>
 
+        {/* Year Input */}
+        <TextField
+          type="number"
+          label="Release Year"
+          value={year}
+          onChange={(e) => setYear(e.target.value)}
+        />
 
-
-        <label style={{ margin: '10px'}}>
-          Release Year:
-          &nbsp;
-          <input type="number" name="year" id="year"/>
-          &nbsp;
-        </label>
-        <button type="submit">Search!</button>
+        <Button type="submit" variant="contained" color="secondary">Search!</Button>
       </form>
-      <br></br>
-      <br></br>
-      { // Show error message
-        (errorMessage !== "") ?
-        (<div style={{ textAlign: "center"}}>
-                    <b>Something went wrong when retrieving the movies!</b>
-                    <br></br>
-                    Error:
-                    <br></br>
-                    {errorMessage}
-                </div>) : ""
-      }
 
-      { // Show loading text in meantime
-        (errorMessage === "" && data === null) ?
-        (<p style={{ textAlign: "center"}}><b>Loading movies...</b></p>): ""
-      }
-
-      { // Print error message from server if any
-        (data != null && data.error) ?
-                (<div style={{ textAlign: "center"}}>
-                    <b>The server said something went wrong when retrieving the movies!</b>
-                    <br></br>
-                    Server-side error:
-                    <br></br>
-                    {data.error}
-                </div>) : ""
-      }
-
-      { // Only show if there's data and no errors
-        (data != null && errorMessage === "" && !data.error) ?
-        (<div><div style={{ textAlign: "center"}}>
-                    <b>{data.length} { (data.length == 1) ? "movie" : "movies" } found.</b>
-                </div><Table data={data} /></div>) : ""
-      }
+      <div style={{ marginTop: "20px", textAlign: "center" }}>
+        {errorMessage && <div><b>Error:</b><br />{errorMessage}</div>}
+        {!errorMessage && data === null && <p><b>Loading movies...</b></p>}
+        {data?.error && <div><b>Server-side error:</b><br />{data.error}</div>}
+        {data && !data.error && (
+          <>
+            <b>{data.length} {data.length === 1 ? "movie" : "movies"} found.</b>
+            <Table data={data} />
+          </>
+        )}
+      </div>
     </div>
   );
 }
