@@ -136,6 +136,19 @@ export default function Wizard() {
                     {result.movie.title || "Title Not Available"}
                   </Typography>
 
+                  {result.trailerUrl && (
+                    <Box sx={{ my: 2 }}>
+                      <iframe
+                        width="100%"
+                        height="315"
+                        src={result.trailerUrl}
+                        title="Movie trailer"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    </Box>
+                  )}
                   <Box display="flex" gap={2} mb={1} color="text.secondary">
                     {result.movie.release_date && <span>({result.movie.release_date.substring(0,4)})</span>}
                     {result.movie.vote_average && <span>★ {result.movie.vote_average}/10</span>}
