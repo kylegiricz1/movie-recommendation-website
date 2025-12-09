@@ -22,6 +22,7 @@ Then go to `http://localhost:5000` to view the webpage.
 2. Run `docker compose build` (to build the container -- this may take 4-5 minutes).
 3. Then run `docker compose up` (to start the containers).
 4. Run `docker compose down` if you want to stop the containers.
+5. Then go to `http://localhost:5000` to view the webpage.
 
 Thanks,
 John
