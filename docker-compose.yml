@@ -4,8 +4,6 @@ services:
     build: ./backend
     ports:
       - "5200:5200"
-    volumes:
-      - ./backend/uploads:/app/uploads
 
   frontend:
     build: ./frontend
