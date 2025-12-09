@@ -4,6 +4,7 @@ import HomePage from "./pages/HomePage";
 import About from "./pages/About";
 import Recommendations from "./pages/Recommendations";
 import Wizard from "./pages/Wizard";
+import List from "./pages/List";
 import { CssBaseline, Container } from "@mui/material";
 
 function App() {
