@@ -1,7 +1,7 @@
 # movie-recommendation-website
 This website uses genre and rating preferences to recommend a movie.
 
-# To run our program:
+# To run our program locally:
 You need to run both the back-end and the front-end at the same time (so 2 different terminals).
 
 For the front-end (React):
@@ -16,6 +16,12 @@ For the back-end (Flask):
 - Then run `python app.py` to start the back-end.
 
 Then go to `http://localhost:5000` to view the webpage.
+
+# To run our program in Docker:
+1. Open a terminal and go to the project's root folder.
+2. Run `docker compose build` (to build the container -- this may take 4-5 minutes).
+3. Then run `docker compose up` (to start the containers).
+4. Run `docker compose down` if you want to stop the containers.
 
 Thanks,
 John
