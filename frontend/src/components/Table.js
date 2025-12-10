@@ -1,9 +1,10 @@
 import Button from '@mui/material/Button';
-
+import { memo } from 'react';
 import Rating from '@mui/material/Rating';
 import "./Table.css";
 
-function Table({ data }) {
+// Use memo to prevent table from updating every time another U.I. component updates
+const Table = memo(function Table({ data }) {
     
     // Save movies to local storage
     function saveMovieToLocalStorage(movie) {
@@ -114,6 +115,6 @@ function Table({ data }) {
                 </table>
         )
     }
-}
+});
 
 export default Table;
